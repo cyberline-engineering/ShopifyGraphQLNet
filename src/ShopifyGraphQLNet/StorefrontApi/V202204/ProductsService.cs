@@ -19,10 +19,11 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
             this.logger = logger;
         }
 
-        public async Task<T> ListProducts<T>(T value, ProductConnectionArguments? arguments = default,
-            CancellationToken cancellationToken = default)
+        public Task<ProductConnection?> ListProducts(ProductConnectionArguments? arguments = default,
+            CancellationToken ct = default)
         {
-
+            var query = String.Empty;
+            return client.ExecuteQuery<ProductConnection>(query, arguments, ct);
         }
     }
 }

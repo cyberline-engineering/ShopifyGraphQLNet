@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +12,37 @@ namespace ShopifyGraphQLNet
         public static IServiceCollection AddShopifyGraphQLNetClient(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddHttpClient<ShopifyGraphQLNetClient>();
+            var section = configuration.GetSection(nameof(ShopifyGraphQLNetClientConfig));
+            services.AddOptions<ShopifyGraphQLNetClientConfig>()
+                .Bind(section)
+                .ValidateDataAnnotations();
+
+            var config = section.Get<ShopifyGraphQLNetClientConfig>();
+
+            services
+                .AddHttpClient<ShopifyGraphQLNetClient>()
+                .ConfigureHttpClient((provider, client) =>
+                {
+                    var options = config.Value;
+                    client.BaseAddress =
+                        new Uri(
+                            $"https://{options.StoreName}.myshopify.com/api/{options.ApiVersion.Value}/graphql.json");
+                    client.DefaultRequestHeaders.Add("X-Shopify-Storefront-Access-Token", options.AccessToken);
+
+                    if (client.DefaultRequestHeaders.UserAgent.Count == 0)
+                    {
+                        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
+                            nameof(ShopifyGraphQLNetClient),
+                            Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)));
+                    }
+
+                });
+
+            services.AddSingleton(() => new JsonSerializerOptions(JsonSerializerDefaults.Web)
+            {
+                Converters = { new JsonStringEnumConverter() },
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
 
             return services;
         }
