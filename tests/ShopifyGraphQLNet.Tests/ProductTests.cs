@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using GraphQL.Query.Builder;
-using GraphQL.Query.Builder.Formatter.SystemTextJson;
+using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.Types;
 using Xunit;
 
@@ -33,6 +33,15 @@ namespace ShopifyGraphQLNet.Tests
             var data = query.Build();
 
             Assert.NotNull(data);
+        }
+
+        [Fact]
+        public void ProductQueryBuilderTest()
+        {
+            var query = QueryBuilder.Build(new { pageInfo = new { StartCursor = "" }, nodes = new { id = 0 }, },
+                "products", new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
+
+            Assert.NotNull(query);
         }
     }
 }
