@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ShopifyGraphQLNet.StorefrontApi;
 
 namespace ShopifyGraphQLNet
 {
@@ -43,6 +44,11 @@ namespace ShopifyGraphQLNet
                 Converters = { new JsonStringEnumConverter() },
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             });
+
+            if (config.ApiVersion.Value == ShopifyApiVersionExtensions.V2022_04.Value)
+            {
+                services.AddTransient<IProductService, StorefrontApi.V202204.ProductService>();
+            }
 
             return services;
         }

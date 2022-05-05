@@ -1,6 +1,11 @@
 using System.Threading.Tasks;
 using GraphQL.Query.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.Extensions.Logging;
 using ShopifyGraphQLNet.Helper;
+using ShopifyGraphQLNet.StorefrontApi;
 using ShopifyGraphQLNet.Types;
 using Xunit;
 
@@ -8,6 +13,27 @@ namespace ShopifyGraphQLNet.Tests
 {
     public class ProductTests
     {
+        private readonly IProductService productService;
+
+        public ProductTests()
+        {
+            var host = Host
+                .CreateDefaultBuilder()
+                .UseEnvironment(Environments.Development)
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddShopifyGraphQLNetClient(context.Configuration);
+                })
+                .ConfigureLogging(builder =>
+                {
+                    builder.AddDebug();
+                    builder.SetMinimumLevel(LogLevel.Trace);
+                })
+                .Build();
+
+            productService = host.Services.GetRequiredService<IProductService>();
+        }
+
         [Fact]
         public void ProductSchemaTest()
         {
@@ -42,6 +68,14 @@ namespace ShopifyGraphQLNet.Tests
                 "products", new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
 
             Assert.NotNull(query);
+        }
+
+        [Fact]
+        public async Task GetProductsTest()
+        {
+            var res = await productService.ListProducts(new ProductConnectionArguments() { First = 5 });
+            
+            Assert.NotNull(res);
         }
     }
 }
