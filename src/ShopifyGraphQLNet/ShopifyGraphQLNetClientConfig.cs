@@ -9,8 +9,11 @@ namespace ShopifyGraphQLNet
     {
         [Required(ErrorMessage = "Not defined StoreName. Please provide correct StoreName at appsettings.json")]
         public string StoreName { get; set; } = default!;
-        [Required(ErrorMessage = "Not defined AccessToken. Please provide correct AccessToken at appsettings.json")]
-        public string AccessToken { get; set; } = default!;
+
+        public string StorefrontApiAccessToken { get; set; } = default!;
+        
+        public string AdminApiAccessToken { get; set; } = default!;
+
         [Required(ErrorMessage = "Not defined ApiVersion. Please provide correct ApiVersion at appsettings.json")]
         public ShopifyApiVersion ApiVersion { get; set; } = ShopifyApiVersionExtensions.V2022_04;
 

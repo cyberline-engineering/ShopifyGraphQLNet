@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.Types;
+using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi.V202204
 {
@@ -15,10 +17,14 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
             this.logger = logger;
         }
 
-        public Task<ProductConnection?> ListProducts(ProductConnectionArguments arguments, CancellationToken ct = default)
+        public Task<QueryResult<ProductConnection>> ListProducts(ProductConnectionArguments arguments, CancellationToken ct = default)
         {
-            var query = String.Empty;
-            return client.ExecuteQuery<ProductConnection>(query, arguments, ct);
+            logger.LogTrace("ListProducts. ProductConnectionArguments: {@productConnectionArguments}", arguments);
+
+            var root = "products";
+            var query = QueryBuilder.Build(ProductConnection.Default, root, arguments);
+
+            return client.ExecuteQuery<ProductConnection>(query, root, ct: ct);
         }
     }
 }

@@ -8,5 +8,5 @@ public interface IHasMetafields
     /// <summary>
     /// Returns a metafield found by namespace and key.
     /// </summary>
-    public Metafield? Metafield { get; set; }
+    public Metafield Metafield(string @namespace, string key);
 }

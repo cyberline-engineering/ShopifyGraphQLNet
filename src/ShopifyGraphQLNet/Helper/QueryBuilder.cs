@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -12,14 +10,12 @@ namespace ShopifyGraphQLNet.Helper
 {
     public static class QueryBuilder
     {
-        public static string Build<T>(T value, string root, object? arguments = default,
+        public static string Build<T>(T? value, string root, object? arguments = default,
             QueryBuildOptions? options = default,
             StringBuilder? builder = default, int level = 0)
         {
             options ??= QueryBuildOptions.Default;
             builder ??= new StringBuilder();
-
-            var properties = (value?.GetType() ?? typeof(T)).GetProperties();
 
             var argProperties =
                 arguments?.GetType().GetProperties().Where(property => property.GetValue(arguments) != null) ??
@@ -31,25 +27,39 @@ namespace ShopifyGraphQLNet.Helper
             AppendValue(builder, $"{root} {(String.IsNullOrEmpty(argValue) ? String.Empty : $"({argValue})")} {{",
                 options.PrettyPrint, level++);
 
+            var type = value?.GetType() ?? typeof(T);
+
+            BuildType(type, options, builder, ref level);
+
+            AppendValue(builder, "}", options.PrettyPrint, --level);
+
+            return builder.ToString();
+        }
+
+        private static void BuildType(Type type, QueryBuildOptions options,
+            StringBuilder builder, ref int level)
+        {
+            var properties = type.GetProperties();
+
             foreach (var property in properties)
             {
                 var propertyName = GetPropertyName(property, options);
+                var propertyType = property.PropertyType;
 
-                if (property.PropertyType.FullName?.StartsWith("System.", StringComparison.Ordinal) ?? false)
+                if ((propertyType.FullName?.StartsWith("System.", StringComparison.Ordinal) ?? false) ||
+                    propertyType.IsEnum)
                 {
                     AppendValue(builder, propertyName, options.PrettyPrint, level);
+                    continue;
                 }
-                else
-                {
-                    var pv = property.GetValue(value);
-                    Build(pv, propertyName, default, options, builder, level);
-                }
+
+                var pt = propertyType.IsArray ? propertyType.GetElementType()! : propertyType;
+
+                AppendValue(builder, $"{propertyName} {{", options.PrettyPrint, level++);
+                BuildType(pt, options, builder, ref level);
+                level--;
+                AppendValue(builder, "}", options.PrettyPrint, level);
             }
-
-            level--;
-            AppendValue(builder, "}", options.PrettyPrint, level);
-
-            return builder.ToString();
         }
 
         private static string GetPropertyName(this PropertyInfo property, QueryBuildOptions options)
@@ -126,13 +136,8 @@ namespace ShopifyGraphQLNet.Helper
                     return $"{{{string.Join(",", dictValue.Select(e => FormatQueryParam(e, options)))}}}";
 
                 case IEnumerable enumerableValue:
-                    List<string> items = new();
-                    foreach (object item in enumerableValue)
-                    {
-                        items.Add(FormatQueryParam(item, options));
-                    }
-
-                    return $"[{string.Join(",", items)}]";
+                    return
+                        $"[{string.Join(",", enumerableValue.OfType<object>().Select(x => FormatQueryParam(x, options)))}]";
 
                 case { } objectValue:
                     Dictionary<string, object> dictionary = ObjectToDictionary(objectValue, options);

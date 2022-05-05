@@ -13,7 +13,7 @@ namespace ShopifyGraphQLNet.Types
     /// For example, a digital download (such as a movie, music or ebook file) also qualifies as a product,
     /// as do services (such as equipment rental, work for hire, customization of another product or an extended warranty).
     /// </summary>
-    public class Product: INode, IOnlineStorePublishable, IHasMetafields
+    public class Product: INode, IOnlineStorePublishable
     {
         /// <inheritdoc />
         public string Id { get; set; } = default!;
@@ -32,8 +32,6 @@ namespace ShopifyGraphQLNet.Types
         /// The description of the product, complete with HTML formatting.
         /// </summary>
         public string DescriptionHtml { get; set; } = default!;
-        /// <inheritdoc />
-        public Metafield? Metafield { get; set; }
     }
 
     /// <summary>
@@ -71,7 +69,13 @@ namespace ShopifyGraphQLNet.Types
         /// <inheritdoc cref="PageInfo"/>
         public PageInfo PageInfo { get; set; } = default!;
 
-        public static readonly ProductConnection Default = new();
+        public static readonly ProductConnection Default = new()
+        {
+            PageInfo = new PageInfo(), 
+            Nodes = Array.Empty<Product>(), 
+            Edges = Array.Empty<ProductEdge>(),
+            Filters = Array.Empty<Filter>()
+        };
     }
 
     public class ProductConnectionArguments

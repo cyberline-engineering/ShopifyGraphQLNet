@@ -28,7 +28,11 @@ namespace ShopifyGraphQLNet
                     client.BaseAddress =
                         new Uri(
                             $"https://{options.StoreName}.myshopify.com/api/{options.ApiVersion.Value}/graphql.json");
-                    client.DefaultRequestHeaders.Add("X-Shopify-Storefront-Access-Token", options.AccessToken);
+                    if (!String.IsNullOrWhiteSpace(options.StorefrontApiAccessToken))
+                    {
+                        client.DefaultRequestHeaders.Add("X-Shopify-Storefront-Access-Token",
+                            options.StorefrontApiAccessToken);
+                    }
 
                     if (client.DefaultRequestHeaders.UserAgent.Count == 0)
                     {
@@ -36,10 +40,9 @@ namespace ShopifyGraphQLNet
                             nameof(ShopifyGraphQLNetClient),
                             Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)));
                     }
-
                 });
 
-            services.AddSingleton(() => new JsonSerializerOptions(JsonSerializerDefaults.Web)
+            services.AddSingleton(_ => new JsonSerializerOptions(JsonSerializerDefaults.Web)
             {
                 Converters = { new JsonStringEnumConverter() },
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
