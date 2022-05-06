@@ -1,22 +1,23 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ShopifyGraphQLNet.Helper;
-using ShopifyGraphQLNet.StorefrontApi;
 using ShopifyGraphQLNet.Types;
 using Xunit;
 
 namespace ShopifyGraphQLNet.Tests
 {
-    public class ProductTests
+    public class ShopifyGraphQLNetClientTests
     {
-        private readonly IProductService productService;
+        private readonly ShopifyGraphQLNetClient client;
 
-        public ProductTests()
+        public ShopifyGraphQLNetClientTests()
         {
             var host = Host
                 .CreateDefaultBuilder()
@@ -36,33 +37,17 @@ namespace ShopifyGraphQLNet.Tests
                 })
                 .Build();
 
-            productService = host.Services.GetRequiredService<IProductService>();
+            client = host.Services.GetRequiredService<ShopifyGraphQLNetClient>();
         }
 
         [Fact]
-        public void ProductQueryBuilderTest()
+        public async Task ExecuteQueryTest()
         {
-            var query = QueryBuilder.Build(new { edges = Array.Empty<Edge<Product>>() },
-                "products", new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
+            var obj = new { nodes = Array.Empty<Product>()};
 
-            Assert.NotNull(query);
-        }
-
-        [Fact]
-        public void ProductConnectionQueryBuilderTest()
-        {
-            var query = QueryBuilder.Build(ProductConnection.Default,
-                "products", new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
-
-            Assert.NotNull(query);
-        }
-
-        [Fact]
-        public async Task GetProductsTest()
-        {
-            var res = await productService.ListProducts(new ProductConnectionArguments() { First = 5 });
+            var result = await client.ExecuteQuery(obj, "products", new { first = 5 });
             
-            res.Assert();
+            result.Assert();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -7,6 +8,7 @@ namespace ShopifyGraphQLNet.Types.Query
     public class QueryResult<T>
     {
         public bool Result { get; set; }
+        public int StatusCode { get; set; }
         public T? Payload { get; set; }
 
         /// <summary>
@@ -40,11 +42,14 @@ namespace ShopifyGraphQLNet.Types.Query
 
                 if (data.Data == default)
                     return new QueryResult<T>()
-                        { Result = false, Errors = data.Errors };
+                        { Result = false, Errors = data.Errors, StatusCode = (int)response.StatusCode };
 
                 var result = data.Data[root].Deserialize<T>(serializerOptions);
                 return new QueryResult<T>()
-                    { Result = true, Payload = result, Errors = data.Errors };
+                {
+                    Result = !(data.Errors?.Length > 0), Payload = result, Errors = data.Errors,
+                    StatusCode = (int)response.StatusCode
+                };
             }
             catch (Exception ex)
             {
@@ -54,12 +59,20 @@ namespace ShopifyGraphQLNet.Types.Query
 
         public static QueryResult<T> Failed<T>(string message)
         {
-            return new QueryResult<T>() { Result = false, Errors = new[] { new Error() { Message = message } } };
+            return new QueryResult<T>()
+            {
+                Result = false, Errors = new[] { new Error() { Message = message } },
+                StatusCode = (int)HttpStatusCode.InternalServerError
+            };
         }
 
         public static QueryResult<T> Failed<T>(Exception ex)
         {
-            return new QueryResult<T>() { Result = false, Errors = new[] { new Error() { Message = ex.ToString() } } };
+            return new QueryResult<T>()
+            {
+                Result = false, Errors = new[] { new Error() { Message = ex.ToString() } },
+                StatusCode = (int)HttpStatusCode.InternalServerError
+            };
         }
     }
 }

@@ -11,25 +11,20 @@ namespace ShopifyGraphQLNet
         private readonly ILogger<ShopifyGraphQLNetClient> logger;
         private readonly JsonSerializerOptions serializerOptions;
 
-        public ShopifyGraphQLNetClient(HttpClient client, JsonSerializerOptions serializerOptions, ILogger<ShopifyGraphQLNetClient> logger)
+        public ShopifyGraphQLNetClient(HttpClient client, JsonSerializerOptions serializerOptions,
+            ILogger<ShopifyGraphQLNetClient> logger)
         {
             this.client = client;
             this.serializerOptions = serializerOptions;
             this.logger = logger;
         }
 
-        public async Task<QueryResult<T>> ExecuteQuery<T>(string query, string root, object? variables = default, CancellationToken ct = default)
+        public async Task<QueryResult<T>> ExecuteQuery<T>(string query, string root, CancellationToken ct = default)
         {
-            var variablesStr = variables != default
-                ? $"variables {{{JsonSerializer.Serialize(variables)}}}"
-                : String.Empty;
-
             using var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                Content = new StringContent($"query {{{query}}} {variablesStr}", null, "application/graphql")
-                //Content = JsonContent.Create(new { query, variables }, new MediaTypeHeaderValue("application/graphql"),
-                //    serializerOptions)
+                Content = new StringContent(query, null, "application/graphql")
             };
 
             using var response = await client.SendAsync(request, ct).ConfigureAwait(false);
@@ -43,6 +38,14 @@ namespace ShopifyGraphQLNet
             var result = await response.ToResult<T>(root, serializerOptions, ct);
 
             return result;
+        }
+
+        public Task<QueryResult<T>> ExecuteQuery<T>(T value, string root, object? variables = default,
+            CancellationToken ct = default)
+        {
+            var query = QueryBuilder.Build(value, root, variables);
+
+            return ExecuteQuery<T>(query, root, ct);
         }
     }
 }

@@ -24,14 +24,14 @@ namespace ShopifyGraphQLNet.Helper
             var argValue = String.Join(", ", argProperties.Select(x =>
                 $"{GetPropertyName(x, options)}: {FormatQueryParam(x.GetValue(arguments), options)}"));
 
-            AppendValue(builder, $"{root} {(String.IsNullOrEmpty(argValue) ? String.Empty : $"({argValue})")} {{",
+            AppendValue(builder, $"query {{ {root} {(String.IsNullOrEmpty(argValue) ? String.Empty : $"({argValue})")} {{",
                 options.PrettyPrint, level++);
 
             var type = value?.GetType() ?? typeof(T);
 
             BuildType(type, options, builder, ref level);
 
-            AppendValue(builder, "}", options.PrettyPrint, --level);
+            AppendValue(builder, "}}", options.PrettyPrint, --level);
 
             return builder.ToString();
         }
@@ -68,12 +68,12 @@ namespace ShopifyGraphQLNet.Helper
                    options.NamingPolicy.ConvertName(property.Name);
         }
 
-        private static void AppendValue(this StringBuilder builder, string propertyName, bool prettyPrint, int level)
+        private static void AppendValue(this StringBuilder builder, string value, bool prettyPrint, int level)
         {
             if (prettyPrint)
-                builder.AppendLine(propertyName.PadLeft(propertyName.Length + level * 2, ' '));
+                builder.AppendLine(value.PadLeft(value.Length + level * 2, ' '));
             else
-                builder.Append($"{propertyName} ");
+                builder.Append($"{value} ");
         }
 
         private static string FormatQueryParam(object? value, QueryBuildOptions options)

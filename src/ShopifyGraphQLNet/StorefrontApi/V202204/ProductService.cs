@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.Types;
 using ShopifyGraphQLNet.Types.Query;
 
@@ -22,9 +21,8 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
             logger.LogTrace("ListProducts. ProductConnectionArguments: {@productConnectionArguments}", arguments);
 
             var root = "products";
-            var query = QueryBuilder.Build(ProductConnection.Default, root, arguments);
 
-            return client.ExecuteQuery<ProductConnection>(query, root, ct: ct);
+            return client.ExecuteQuery<ProductConnection>(ProductConnection.Default, root, arguments, ct);
         }
     }
 }
