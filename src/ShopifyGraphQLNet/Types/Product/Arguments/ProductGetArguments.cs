@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ShopifyGraphQLNet.Types.Attribute;
 
-namespace ShopifyGraphQLNet.Types.Product
+namespace ShopifyGraphQLNet.Types.Product.Arguments
 {
     public class ProductGetArguments
     {
@@ -16,6 +12,7 @@ namespace ShopifyGraphQLNet.Types.Product
         /// <summary>
         /// The handle of the <seealso cref="Product"/>
         /// </summary>
+        [IdGraphType]
         public string? Id { get; set; }
     }
 }

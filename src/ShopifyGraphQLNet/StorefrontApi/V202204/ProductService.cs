@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using ShopifyGraphQLNet.Types;
 using ShopifyGraphQLNet.Types.Product;
+using ShopifyGraphQLNet.Types.Product.Arguments;
 using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi.V202204
@@ -27,9 +27,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            var root = "products";
-
-            return client.ExecuteQuery<ProductConnection>(ProductConnection.Default, root, arguments, ct);
+            return client.ExecuteQuery(ProductConnection.Default, "products", "listProducts", arguments, ct);
         }
 
         /// <summary>
@@ -42,9 +40,8 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            var root = "product";
-
-            return client.ExecuteQuery<Product>(Product.Default, root, arguments, ct);
+            return client.ExecuteQuery(Product.Default, "product", "getProductById",
+                arguments, ct);
         }
     }
 }

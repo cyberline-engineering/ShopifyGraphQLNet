@@ -1,4 +1,6 @@
-﻿namespace ShopifyGraphQLNet.Types;
+﻿using ShopifyGraphQLNet.Types.Interface;
+
+namespace ShopifyGraphQLNet.Types;
 
 /// <summary>
 /// Metafields represent custom metadata attached to a resource.

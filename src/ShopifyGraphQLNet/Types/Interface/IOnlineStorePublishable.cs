@@ -1,4 +1,4 @@
-﻿namespace ShopifyGraphQLNet.Types;
+﻿namespace ShopifyGraphQLNet.Types.Interface;
 
 /// <summary>
 /// Represents a resource that can be published to the Online Store sales channel.

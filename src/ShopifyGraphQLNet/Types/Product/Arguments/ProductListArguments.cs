@@ -1,4 +1,4 @@
-﻿namespace ShopifyGraphQLNet.Types.Product;
+﻿namespace ShopifyGraphQLNet.Types.Product.Arguments;
 
 public class ProductListArguments: ConnectionArguments
 {

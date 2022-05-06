@@ -1,4 +1,6 @@
-﻿namespace ShopifyGraphQLNet.Types.Product;
+﻿using ShopifyGraphQLNet.Types.Interface;
+
+namespace ShopifyGraphQLNet.Types.Product;
 
 /// <summary>
 /// Product property names like "Size", "Color", and "Material" that the customers can select. Variants are selected based on permutations of these options. 255 characters limit each.

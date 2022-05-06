@@ -1,4 +1,4 @@
-﻿namespace ShopifyGraphQLNet.Types;
+﻿namespace ShopifyGraphQLNet.Types.Interface;
 
 /// <summary>
 /// An object with an ID field to support global identification,

@@ -5,33 +5,56 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ShopifyGraphQLNet.Types.Attribute;
 
 namespace ShopifyGraphQLNet.Helper
 {
     public static class QueryBuilder
     {
-        public static string Build<T>(T? value, string root, object? arguments = default,
-            QueryBuildOptions? options = default,
-            StringBuilder? builder = default, int level = 0)
+        public static string Build<TValue, TArgument>(TValue? value, string root, string? operationName = default,
+            TArgument? arguments = default, QueryBuildOptions? options = default)
         {
             options ??= QueryBuildOptions.Default;
-            builder ??= new StringBuilder();
+            var builder = new StringBuilder();
+            var level = 0;
 
-            var argProperties =
-                arguments?.GetType().GetProperties().Where(property => property.GetValue(arguments) != null) ??
-                Array.Empty<PropertyInfo>();
+            if (arguments != null)
+            {
+                var argProperties = arguments.GetType().GetProperties()
+                    .Where(property => property.GetValue(arguments) != null);
 
-            var argValue = String.Join(", ", argProperties.Select(x =>
-                $"{GetPropertyName(x, options)}: {FormatQueryParam(x.GetValue(arguments), options)}"));
+                if (!String.IsNullOrWhiteSpace(operationName))
+                {
+                    var argItems = argProperties
+                        .Select(x => (name: GetPropertyName(x, options), type: GetPropertyGraphType(x)))
+                        .ToArray();
 
-            AppendValue(builder, $"query {{ {root} {(String.IsNullOrEmpty(argValue) ? String.Empty : $"({argValue})")} {{",
-                options.PrettyPrint, level++);
+                    var argValues = String.Join(", ", argItems.Select(x => $"{x.name}: ${x.name}"));
+                    var argTypes = String.Join(", ", argItems.Select(x => $"${x.name}: {x.type}"));
 
-            var type = value?.GetType() ?? typeof(T);
+                    operationName = $"{operationName}({argTypes})";
+                    root = $"{root}({argValues})";
+                }
+                else
+                {
+                    var argItems = argProperties
+                        .Select(x => (name: GetPropertyName(x, options),
+                            value: FormatQueryParam(x.GetValue(arguments), options)));
+
+                    var argValues = String.Join(", ", argItems.Select(x => $"{x.name}: {x.value}"));
+                    root = $"{root}({argValues})";
+                }
+            }
+
+            AppendValue(builder, $"query {operationName} {{", options.PrettyPrint, level++);
+            AppendValue(builder, $"{root} {{", options.PrettyPrint, level++);
+
+            var type = value?.GetType() ?? typeof(TValue);
 
             BuildType(type, options, builder, ref level);
 
-            AppendValue(builder, "}}", options.PrettyPrint, --level);
+            AppendValue(builder, "}", options.PrettyPrint, --level);
+            AppendValue(builder, "}", options.PrettyPrint, --level);
 
             return builder.ToString();
         }
@@ -66,6 +89,21 @@ namespace ShopifyGraphQLNet.Helper
         {
             return property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ??
                    options.NamingPolicy.ConvertName(property.Name);
+        }
+
+        private static string GetPropertyGraphType(this PropertyInfo property)
+        {
+            if (property.GetCustomAttribute<IdGraphType>() != default) return "ID";
+
+            var type = property.PropertyType.GetUnderlyingType();
+
+            return type.Name switch
+            {
+                nameof(Int16) => "Int",
+                nameof(Int32) => "Int",
+                nameof(Int64) => "Int",
+                _ => type.Name
+            };
         }
 
         private static void AppendValue(this StringBuilder builder, string value, bool prettyPrint, int level)

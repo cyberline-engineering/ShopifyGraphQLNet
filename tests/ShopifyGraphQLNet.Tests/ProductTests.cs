@@ -9,6 +9,7 @@ using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.StorefrontApi;
 using ShopifyGraphQLNet.Types;
 using ShopifyGraphQLNet.Types.Product;
+using ShopifyGraphQLNet.Types.Product.Arguments;
 using Xunit;
 
 namespace ShopifyGraphQLNet.Tests
@@ -44,7 +45,7 @@ namespace ShopifyGraphQLNet.Tests
         public void ProductQueryBuilderTest()
         {
             var query = QueryBuilder.Build(new { edges = Array.Empty<Edge<Product>>() },
-                "products", new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
+                "products", default, new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
 
             Assert.NotNull(query);
         }
@@ -53,7 +54,7 @@ namespace ShopifyGraphQLNet.Tests
         public void ProductConnectionQueryBuilderTest()
         {
             var query = QueryBuilder.Build(ProductConnection.Default,
-                "products", new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
+                "products", default, new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
 
             Assert.NotNull(query);
         }

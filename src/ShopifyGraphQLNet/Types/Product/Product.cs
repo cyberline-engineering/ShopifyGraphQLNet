@@ -1,4 +1,6 @@
-﻿namespace ShopifyGraphQLNet.Types.Product
+﻿using ShopifyGraphQLNet.Types.Interface;
+
+namespace ShopifyGraphQLNet.Types.Product
 {
     /// <summary>
     /// A product represents an individual item for sale in a Shopify store.

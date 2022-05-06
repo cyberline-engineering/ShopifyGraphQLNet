@@ -1,4 +1,4 @@
-﻿namespace ShopifyGraphQLNet.Types;
+﻿namespace ShopifyGraphQLNet.Types.Interface;
 
 /// <summary>
 /// Represents information about the metafields associated to the specified resource.

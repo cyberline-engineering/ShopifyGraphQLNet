@@ -1,4 +1,6 @@
-﻿namespace ShopifyGraphQLNet.Types.Product;
+﻿using ShopifyGraphQLNet.Types.Interface;
+
+namespace ShopifyGraphQLNet.Types.Product;
 
 /// <summary>
 /// A product variant represents a different version of a product, such as differing sizes or differing colors.

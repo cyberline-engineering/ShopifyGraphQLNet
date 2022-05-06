@@ -46,7 +46,7 @@ namespace ShopifyGraphQLNet.Tests
         {
             var obj = new { nodes = Array.Empty<Product>()};
 
-            var result = await client.ExecuteQuery(obj, "products", new { first = 5 });
+            var result = await client.ExecuteQuery(obj, "products", default, new { first = 5 });
             
             result.Assert();
         }
