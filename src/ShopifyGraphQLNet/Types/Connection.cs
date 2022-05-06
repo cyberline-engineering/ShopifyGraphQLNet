@@ -56,3 +56,27 @@ public class PageInfo
     /// </summary>
     public string? EndCursor { get; set; }
 }
+
+public class ConnectionArguments
+{
+    /// <summary>
+    /// Returns the elements that come after the specified cursor.
+    /// </summary>
+    public string? After { get; set; }
+    /// <summary>
+    /// Returns the elements that come before the specified cursor.
+    /// </summary>
+    public string? Before { get; set; }
+    /// <summary>
+    /// Returns up to the first n elements from the list.
+    /// </summary>
+    public int? First { get; set; }
+    /// <summary>
+    /// Returns up to the last n elements from the list.
+    /// </summary>
+    public int? Last { get; set; }
+    /// <summary>
+    /// Reverse the order of the underlying list.
+    /// </summary>
+    public bool? Reverse { get; set; }
+}

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ShopifyGraphQLNet.Types;
+using ShopifyGraphQLNet.Types.Product;
 using Xunit;
 
 namespace ShopifyGraphQLNet.Tests

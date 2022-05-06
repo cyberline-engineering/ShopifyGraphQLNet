@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.StorefrontApi;
 using ShopifyGraphQLNet.Types;
+using ShopifyGraphQLNet.Types.Product;
 using Xunit;
 
 namespace ShopifyGraphQLNet.Tests
@@ -58,9 +59,19 @@ namespace ShopifyGraphQLNet.Tests
         }
 
         [Fact]
-        public async Task GetProductsTest()
+        public async Task ListProductsTest()
         {
-            var res = await productService.ListProducts(new ProductConnectionArguments() { First = 5 });
+            var res = await productService.List(new ProductListArguments() { First = 5 });
+            
+            res.Assert();
+        }
+
+        [Theory]
+        [InlineData("gid://shopify/Product/7712881869037")]
+        [InlineData(null, "test-product")]
+        public async Task GetProductTest(string? id = default, string? handle = default)
+        {
+            var res = await productService.Get(new ProductGetArguments() { Id = id, Handle = handle});
             
             res.Assert();
         }

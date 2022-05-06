@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using ShopifyGraphQLNet.Types;
+using ShopifyGraphQLNet.Types.Product;
 using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi.V202204
@@ -16,13 +17,34 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
             this.logger = logger;
         }
 
-        public Task<QueryResult<ProductConnection>> ListProducts(ProductConnectionArguments arguments, CancellationToken ct = default)
+        /// <summary>
+        /// List of the shop’s products.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, CancellationToken ct = default)
         {
-            logger.LogTrace("ListProducts. ProductConnectionArguments: {@productConnectionArguments}", arguments);
+            logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
             var root = "products";
 
             return client.ExecuteQuery<ProductConnection>(ProductConnection.Default, root, arguments, ct);
+        }
+
+        /// <summary>
+        /// Fetch a specific Product by one of its unique attributes.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public Task<QueryResult<Product>> Get(ProductGetArguments arguments, CancellationToken ct = default)
+        {
+            logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
+
+            var root = "product";
+
+            return client.ExecuteQuery<Product>(Product.Default, root, arguments, ct);
         }
     }
 }
