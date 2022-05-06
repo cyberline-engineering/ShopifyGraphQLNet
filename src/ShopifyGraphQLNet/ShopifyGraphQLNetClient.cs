@@ -20,7 +20,7 @@ namespace ShopifyGraphQLNet
             this.logger = logger;
         }
 
-        public async Task<QueryResult<TValue>> ExecuteQuery<TValue, TArguments>(string query, string root, TArguments? variables = default, CancellationToken ct = default)
+        public async Task<QueryResult<T>> ExecuteStringQuery<T>(string query, string root, dynamic? variables = default, CancellationToken ct = default)
         {
             using var request = new HttpRequestMessage()
             {
@@ -33,20 +33,20 @@ namespace ShopifyGraphQLNet
             if (!response.IsSuccessStatusCode)
             {
                 var content = await logger.LogIfErrorResponse(response).ConfigureAwait(false);
-                return QueryResultExtensions.Failed<TValue>(content);
+                return QueryResultExtensions.Failed<T>(content);
             }
 
-            var result = await response.ToResult<TValue>(root, serializerOptions, ct);
+            var result = await response.ToResult<T>(root, serializerOptions, ct);
 
             return result;
         }
 
-        public Task<QueryResult<TValue>> ExecuteQuery<TValue, TArguments>(TValue value, string root,
-            string? operationName = default, TArguments? variables = default, CancellationToken ct = default)
+        public Task<QueryResult<T>> ExecuteQuery<T>(T value, string root, string? operationName = default, CancellationToken ct = default)
         {
-            var query = QueryBuilder.Build(value, root, operationName, variables);
+            var query = QueryBuilder.Build(value, root, operationName);
+            var arguments = QueryBuilder.GetArguments(value);
 
-            return ExecuteQuery<TValue, TArguments>(query, root, variables, ct);
+            return ExecuteStringQuery<T>(query, root, arguments, ct);
         }
     }
 }

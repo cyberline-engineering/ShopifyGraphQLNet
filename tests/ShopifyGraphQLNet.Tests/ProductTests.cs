@@ -44,8 +44,8 @@ namespace ShopifyGraphQLNet.Tests
         [Fact]
         public void ProductQueryBuilderTest()
         {
-            var query = QueryBuilder.Build(new { edges = Array.Empty<Edge<Product>>() },
-                "products", default, new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
+            var query = QueryBuilder.Build(new { edges = Array.Empty<Edge<Product>>(), _arguments = new {first = 10} },
+                "products", default, new QueryBuildOptions() {PrettyPrint = true});
 
             Assert.NotNull(query);
         }
@@ -53,8 +53,8 @@ namespace ShopifyGraphQLNet.Tests
         [Fact]
         public void ProductConnectionQueryBuilderTest()
         {
-            var query = QueryBuilder.Build(ProductConnection.Default,
-                "products", default, new {first = 10}, new QueryBuildOptions() {PrettyPrint = true});
+            var query = QueryBuilder.Build(new ProductConnection(), "products", default,
+                new QueryBuildOptions() { PrettyPrint = true });
 
             Assert.NotNull(query);
         }

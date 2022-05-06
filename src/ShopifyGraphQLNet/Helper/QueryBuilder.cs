@@ -11,37 +11,33 @@ namespace ShopifyGraphQLNet.Helper
 {
     public static class QueryBuilder
     {
-        public static string Build<TValue, TArgument>(TValue? value, string root, string? operationName = default,
-            TArgument? arguments = default, QueryBuildOptions? options = default)
+        public static string Build<T>(T value, string root, string? operationName = default,
+            QueryBuildOptions? options = default)
         {
+            if (value == null)
+            {
+                throw new ArgumentException("value don't be null", nameof(value));
+            }
+
             options ??= QueryBuildOptions.Default;
             var builder = new StringBuilder();
             var level = 0;
 
-            if (arguments != null)
-            {
-                var argProperties = arguments.GetType().GetProperties()
-                    .Where(property => property.GetValue(arguments) != null);
+            var arguments = GetArgumentValues(value, options).ToArray();
 
+            if (arguments.Length > 0)
+            {
                 if (!String.IsNullOrWhiteSpace(operationName))
                 {
-                    var argItems = argProperties
-                        .Select(x => (name: GetPropertyName(x, options), type: GetPropertyGraphType(x)))
-                        .ToArray();
-
-                    var argValues = String.Join(", ", argItems.Select(x => $"{x.name}: ${x.name}"));
-                    var argTypes = String.Join(", ", argItems.Select(x => $"${x.name}: {x.type}"));
+                    var argValues = String.Join(", ", arguments.Select(x => $"{x.name}: ${x.name}"));
+                    var argTypes = String.Join(", ", arguments.Select(x => $"${x.name}: {x.type}"));
 
                     operationName = $"{operationName}({argTypes})";
                     root = $"{root}({argValues})";
                 }
                 else
                 {
-                    var argItems = argProperties
-                        .Select(x => (name: GetPropertyName(x, options),
-                            value: FormatQueryParam(x.GetValue(arguments), options)));
-
-                    var argValues = String.Join(", ", argItems.Select(x => $"{x.name}: {x.value}"));
+                    var argValues = String.Join(", ", arguments.Select(x => $"{x.name}: {x.value}"));
                     root = $"{root}({argValues})";
                 }
             }
@@ -49,9 +45,7 @@ namespace ShopifyGraphQLNet.Helper
             AppendValue(builder, $"query {operationName} {{", options.PrettyPrint, level++);
             AppendValue(builder, $"{root} {{", options.PrettyPrint, level++);
 
-            var type = value?.GetType() ?? typeof(TValue);
-
-            BuildType(type, options, builder, ref level);
+            BuildType(value, value.GetType(), options, builder, ref level);
 
             AppendValue(builder, "}", options.PrettyPrint, --level);
             AppendValue(builder, "}", options.PrettyPrint, --level);
@@ -59,10 +53,25 @@ namespace ShopifyGraphQLNet.Helper
             return builder.ToString();
         }
 
-        private static void BuildType(Type type, QueryBuildOptions options,
-            StringBuilder builder, ref int level)
+        private static IEnumerable<(string name, string type, string value)> GetArgumentValues(object? value,
+            QueryBuildOptions options)
         {
-            var properties = type.GetProperties();
+            var arguments = GetArguments(value);
+
+            if (arguments == null) return Enumerable.Empty<(string name, string type, string value)>();
+
+            var argProperties = arguments.GetType().GetProperties()
+                .Where(property => !property.Name.StartsWith('_') && property.GetValue(arguments) != null);
+            var argItems = argProperties
+                .Select(x => (name: GetPropertyName(x, options), type: GetPropertyGraphType(x),
+                    value: FormatQueryParam(x.GetValue(arguments), options)));
+
+            return argItems;
+        }
+
+        private static void BuildType(object? value, Type type, QueryBuildOptions options, StringBuilder builder, ref int level)
+        {
+            var properties = type.GetProperties().Where(x => value == default || x.GetValue(value) != null);
 
             foreach (var property in properties)
             {
@@ -77,9 +86,26 @@ namespace ShopifyGraphQLNet.Helper
                 }
 
                 var pt = propertyType.IsArray ? propertyType.GetElementType()! : propertyType;
+                var propertyValue = value != default
+                    ? property.GetValue(value)!
+                    : default;
+
+                if (propertyType.IsArray)
+                {
+                    var array = (Array)property.GetValue(value)!;
+                    propertyValue = array.Length == 0 ? null : array.GetValue(0);
+                }
+
+                var arguments = GetArgumentValues(propertyValue, options).ToArray();
+
+                if (arguments.Length > 0)
+                {
+                    var argValues = String.Join(", ", arguments.Select(x => $"{x.name}: {x.value}"));
+                    propertyName = $"{propertyName}({argValues})";
+                }
 
                 AppendValue(builder, $"{propertyName} {{", options.PrettyPrint, level++);
-                BuildType(pt, options, builder, ref level);
+                BuildType(propertyValue, pt, options, builder, ref level);
                 level--;
                 AppendValue(builder, "}", options.PrettyPrint, level);
             }
@@ -89,6 +115,13 @@ namespace ShopifyGraphQLNet.Helper
         {
             return property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ??
                    options.NamingPolicy.ConvertName(property.Name);
+        }
+
+        internal static object? GetArguments(object? value)
+        {
+            var argumentsProperty = value?.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(x => x.Name.Equals("_arguments"));
+
+            return argumentsProperty?.GetValue(value);
         }
 
         private static string GetPropertyGraphType(this PropertyInfo property)
@@ -178,7 +211,7 @@ namespace ShopifyGraphQLNet.Helper
                         $"[{string.Join(",", enumerableValue.OfType<object>().Select(x => FormatQueryParam(x, options)))}]";
 
                 case { } objectValue:
-                    Dictionary<string, object> dictionary = ObjectToDictionary(objectValue, options);
+                    var dictionary = ObjectToDictionary(objectValue, options);
                     return FormatQueryParam(dictionary, options);
 
                 default:
@@ -186,13 +219,13 @@ namespace ShopifyGraphQLNet.Helper
             }
         }
 
-        internal static Dictionary<string, object> ObjectToDictionary(object @object, QueryBuildOptions options) =>
+        internal static Dictionary<string, object?> ObjectToDictionary(object @object, QueryBuildOptions options) =>
             @object
                 .GetType()
                 .GetProperties()
                 .Where(property => property.GetValue(@object) != null)
                 .Select(property =>
-                    new KeyValuePair<string, object>(
+                    new KeyValuePair<string, object?>(
                         GetPropertyName(property, options), property.GetValue(@object)))
                 .OrderBy(property => property.Key)
                 .ToDictionary(property => property.Key, property => property.Value);

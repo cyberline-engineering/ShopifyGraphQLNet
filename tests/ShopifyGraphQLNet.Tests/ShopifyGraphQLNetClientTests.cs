@@ -44,9 +44,14 @@ namespace ShopifyGraphQLNet.Tests
         [Fact]
         public async Task ExecuteQueryTest()
         {
-            var obj = new { nodes = Array.Empty<Product>()};
+            var product = new
+            {
+                id = "", description = "",
+                variants = new { nodes = new[] { new { id = "", availableForSale = false, barcode = "" } }, _arguments = new {first = 5} }
+            };
+            var obj = new { nodes = new[] { product } };
 
-            var result = await client.ExecuteQuery(obj, "products", default, new { first = 5 });
+            var result = await client.ExecuteQuery(obj, "products", "listProducts");
             
             result.Assert();
         }

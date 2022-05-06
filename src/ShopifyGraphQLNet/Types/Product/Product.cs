@@ -118,11 +118,16 @@ namespace ShopifyGraphQLNet.Types.Product
         ///// A selling plan group contains individual selling plans.
         ///// </summary>
         //public Connection<SellingPlanGroup> SellingPlanGroups { get; set; } = default!;
-        ///// <summary>
-        ///// List of the product’s variants.
-        ///// </summary>
-        //public Connection<ProductVariant> Variants { get; set; } = default!;
+        /// <summary>
+        /// List of the product’s variants.
+        /// </summary>
+        public Connection<ProductVariant> Variants { get; set; } = default!;
 
-        public static readonly Product Default = new();
+        internal dynamic? _arguments { get; set; }
+    }
+
+    public class ProductVariantConnection : Connection<ProductVariant>
+    {
+        internal static readonly ProductVariantConnection Default = new() { _arguments = ConnectionArguments.Default, Nodes = Array.Empty<ProductVariant>()};
     }
 }

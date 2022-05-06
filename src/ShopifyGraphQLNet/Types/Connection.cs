@@ -16,6 +16,8 @@ public class Connection<T>
     public T[] Nodes { get; set; } = default!;
     /// <inheritdoc cref="PageInfo"/>
     public PageInfo PageInfo { get; set; } = default!;
+
+    internal virtual dynamic? _arguments { get; set; }
 }
 
 /// <summary>
@@ -79,4 +81,6 @@ public class ConnectionArguments
     /// Reverse the order of the underlying list.
     /// </summary>
     public bool? Reverse { get; set; }
+
+    internal static readonly ConnectionArguments Default = new() { First = 100 };
 }

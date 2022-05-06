@@ -6,7 +6,7 @@ using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi.V202204
 {
-    public class ProductService: IProductService
+    public class ProductService : IProductService
     {
         private readonly ShopifyGraphQLNetClient client;
         private readonly ILogger<ProductService> logger;
@@ -27,7 +27,12 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            return client.ExecuteQuery(ProductConnection.Default, "products", "listProducts", arguments, ct);
+            return client.ExecuteQuery(
+                new ProductConnection
+                {
+                    _arguments = arguments,
+                    Nodes = new[] { new Product() { Variants = ProductVariantConnection.Default } }
+                }, "products", "listProducts", ct);
         }
 
         /// <summary>
@@ -40,8 +45,12 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            return client.ExecuteQuery(Product.Default, "product", "getProductById",
-                arguments, ct);
+            return client.ExecuteQuery(
+                new Product
+                {
+                    _arguments = arguments,
+                    Variants = ProductVariantConnection.Default
+                }, "product", "getProductById", ct);
         }
     }
 }
