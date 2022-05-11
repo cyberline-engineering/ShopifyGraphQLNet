@@ -14,4 +14,8 @@
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Types\Checkout\Arguments\" />
+  </ItemGroup>
+
 </Project>

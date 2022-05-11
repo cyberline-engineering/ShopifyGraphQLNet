@@ -6,16 +6,10 @@ using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi.V202204
 {
-    public class ProductService : IProductService
+    public class ProductService : ServiceBase, IProductService
     {
-        private readonly ShopifyGraphQLNetClient client;
-        private readonly ILogger<ProductService> logger;
-
-        public ProductService(ShopifyGraphQLNetClient client, ILogger<ProductService> logger)
-        {
-            this.client = client;
-            this.logger = logger;
-        }
+        public ProductService(ShopifyGraphQLNetClient client, ILogger<ProductService> logger): base(client, logger)
+        { }
 
         /// <summary>
         /// List of the shop’s products.
