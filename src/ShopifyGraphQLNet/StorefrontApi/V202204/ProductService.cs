@@ -32,7 +32,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
                 {
                     _arguments = arguments,
                     Nodes = new[] { new Product() { Variants = ProductVariantConnection.Default } }
-                }, "products", "listProducts", ct);
+                }, "products", null, "listProducts", ct);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
                 {
                     _arguments = arguments,
                     Variants = ProductVariantConnection.Default
-                }, "product", "getProductById", ct);
+                }, "product", null, "getProductById", ct);
         }
     }
 }

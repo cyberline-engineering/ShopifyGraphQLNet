@@ -47,13 +47,15 @@ namespace ShopifyGraphQLNet.Tests
             var product = new
             {
                 id = "", description = "",
-                variants = new { nodes = new[] { new { id = "", availableForSale = false, barcode = "" } }, _arguments = new {first = 5} }
+                variants = new { nodes = new[] { new { id = "", availableForSale = false, barcode = "" } }, _arguments = new {first = 5} },
             };
-            var obj = new { nodes = new[] { product } };
+            var obj = new { nodes = new[] { product }, _arguments = new {first = 2} };
 
-            var result = await client.ExecuteQuery(obj, "products", "listProducts");
+            var result = await client.ExecuteQuery(obj, "products");
             
             result.Assert();
+
+            Assert.NotEmpty(result.Payload!.nodes);
         }
     }
 }

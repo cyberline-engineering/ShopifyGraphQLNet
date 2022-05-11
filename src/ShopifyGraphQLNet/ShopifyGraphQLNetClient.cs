@@ -20,8 +20,11 @@ namespace ShopifyGraphQLNet
             this.logger = logger;
         }
 
-        public async Task<QueryResult<T>> ExecuteStringQuery<T>(string query, string root, dynamic? variables = default, CancellationToken ct = default)
+        public async Task<QueryResult<T>> ExecuteQuery<T>(T value, string root, string? query = default, string? operationName = default, CancellationToken ct = default)
         {
+            query ??= QueryBuilder.Build(value, root, operationName);
+            var variables = QueryBuilder.GetArguments(value);
+
             using var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
@@ -39,14 +42,6 @@ namespace ShopifyGraphQLNet
             var result = await response.ToResult<T>(root, serializerOptions, ct);
 
             return result;
-        }
-
-        public Task<QueryResult<T>> ExecuteQuery<T>(T value, string root, string? operationName = default, CancellationToken ct = default)
-        {
-            var query = QueryBuilder.Build(value, root, operationName);
-            var arguments = QueryBuilder.GetArguments(value);
-
-            return ExecuteStringQuery<T>(query, root, arguments, ct);
         }
     }
 }

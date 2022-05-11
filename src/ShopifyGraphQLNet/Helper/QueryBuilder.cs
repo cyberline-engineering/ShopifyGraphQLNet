@@ -11,6 +11,8 @@ namespace ShopifyGraphQLNet.Helper
 {
     public static class QueryBuilder
     {
+        private const string ArgumentsPropertyName = "_arguments";
+
         public static string Build<T>(T value, string root, string? operationName = default,
             QueryBuildOptions? options = default)
         {
@@ -61,7 +63,7 @@ namespace ShopifyGraphQLNet.Helper
             if (arguments == null) return Enumerable.Empty<(string name, string type, string value)>();
 
             var argProperties = arguments.GetType().GetProperties()
-                .Where(property => !property.Name.StartsWith('_') && property.GetValue(arguments) != null);
+                .Where(property => !property.Name.Equals(ArgumentsPropertyName) && property.GetValue(arguments) != null);
             var argItems = argProperties
                 .Select(x => (name: GetPropertyName(x, options), type: GetPropertyGraphType(x),
                     value: FormatQueryParam(x.GetValue(arguments), options)));
@@ -71,7 +73,8 @@ namespace ShopifyGraphQLNet.Helper
 
         private static void BuildType(object? value, Type type, QueryBuildOptions options, StringBuilder builder, ref int level)
         {
-            var properties = type.GetProperties().Where(x => value == default || x.GetValue(value) != null);
+            var properties = type.GetProperties()
+                .Where(x => !x.Name.Equals(ArgumentsPropertyName) && (value == default || x.GetValue(value) != null));
 
             foreach (var property in properties)
             {
@@ -119,7 +122,9 @@ namespace ShopifyGraphQLNet.Helper
 
         internal static object? GetArguments(object? value)
         {
-            var argumentsProperty = value?.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(x => x.Name.Equals("_arguments"));
+            var argumentsProperty = value?.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                .FirstOrDefault(x => x.Name.Equals(ArgumentsPropertyName));
 
             return argumentsProperty?.GetValue(value);
         }
