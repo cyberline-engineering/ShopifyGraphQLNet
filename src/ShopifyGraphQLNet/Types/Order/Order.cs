@@ -143,6 +143,12 @@ public class Order: INode, IHasMetafields
     /// List of the order’s line items.
     /// </summary>
     public OrderLineItemConnection LineItems { get; set; } = default!;
+
+    public static readonly Order Default = new()
+    {
+        Name = String.Empty, Id = String.Empty, LineItems = OrderLineItemConnection.Default,
+        DiscountApplications = DiscountApplicationConnection.Default
+    };
 }
 
 /// <inheritdoc />
