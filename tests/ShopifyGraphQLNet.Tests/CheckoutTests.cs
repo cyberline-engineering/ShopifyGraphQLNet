@@ -86,7 +86,24 @@ namespace ShopifyGraphQLNet.Tests
 
             result.Assert();
             Assert.NotNull(address);
-            Assert.Equal(Extensions.TestAddress2.Address1, address!.Address1);
+            Assert.Equal(arguments.ShippingAddress.Address1, address!.Address1);
+        }
+
+        [Fact]
+        public async Task UpdateEmailTest()
+        {
+            var arguments = new CheckoutEmailUpdateV2Arguments()
+            {
+                CheckoutId = checkoutPayload.Checkout.Id,
+                Email = "john@doe.com"
+            };
+
+            var result = await checkoutService.EmailUpdate(arguments);
+            var email = result.Payload?.Checkout.Email;
+
+            result.Assert();
+            Assert.NotNull(email);
+            Assert.Equal(arguments.Email, email);
         }
 
         public async Task InitializeAsync()

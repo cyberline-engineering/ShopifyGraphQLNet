@@ -1,12 +1,12 @@
 ﻿namespace ShopifyGraphQLNet.Types.Checkout;
 
 /// <summary>
-/// Updates the shipping address of an existing checkout result payload
+/// Updates the email on an existing checkout result payload.
 /// </summary>
-public class CheckoutShippingAddressUpdateV2Payload
+public class CheckoutEmailUpdateV2Payload
 {
     /// <summary>
-    /// The updated checkout object.
+    /// The checkout object with the updated email.
     /// </summary>
     public Checkout Checkout { get; set; } = default!;
     /// <summary>
@@ -14,5 +14,5 @@ public class CheckoutShippingAddressUpdateV2Payload
     /// </summary>
     public CheckoutUserError[] CheckoutUserErrors { get; set; } = default!;
 
-    public static readonly CheckoutShippingAddressUpdateV2Payload Default = new() { Checkout = Checkout.Default };
+    public static readonly CheckoutEmailUpdateV2Payload Default = new() { Checkout = Checkout.Default };
 }

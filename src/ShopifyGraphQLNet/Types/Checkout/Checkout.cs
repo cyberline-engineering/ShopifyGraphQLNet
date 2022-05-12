@@ -138,6 +138,7 @@ public class Checkout: INode
         AvailableShippingRates = AvailableShippingRates.Default,
         ShippingAddress = MailingAddress.Default,
         ShippingLine = ShippingRate.Default,
+        Email = String.Empty,
     };
 }
 

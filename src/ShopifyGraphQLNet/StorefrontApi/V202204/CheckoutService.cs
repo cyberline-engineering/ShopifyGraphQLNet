@@ -39,5 +39,19 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
 
             return client.ExecuteMutation(CheckoutShippingAddressUpdateV2Payload.Default, arguments, "checkoutShippingAddressUpdateV2", ct: ct);
         }
+
+        /// <summary>
+        /// Updates the email on an existing checkout.
+        /// Requires unauthenticated_write_checkouts access scope.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public Task<QueryResult<CheckoutEmailUpdateV2Payload>> EmailUpdate(CheckoutEmailUpdateV2Arguments arguments, CancellationToken ct = default)
+        {
+            logger.LogTrace("EmailUpdate. CheckoutEmailUpdateV2Arguments: {@checkoutEmailUpdateV2Arguments}", arguments);
+
+            return client.ExecuteMutation(CheckoutEmailUpdateV2Payload.Default, arguments, "checkoutEmailUpdateV2", ct: ct);
+        }
     }
 }
