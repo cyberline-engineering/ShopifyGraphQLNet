@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="Types\Checkout\Arguments\" />
+    <Folder Include="Types\Order\" />
   </ItemGroup>
 
 </Project>

@@ -121,7 +121,7 @@ namespace ShopifyGraphQLNet.Types.Product
         /// <summary>
         /// List of the product’s variants.
         /// </summary>
-        public Connection<ProductVariant> Variants { get; set; } = default!;
+        public ProductVariantConnection Variants { get; set; } = default!;
 
         internal dynamic? _arguments { get; set; }
     }

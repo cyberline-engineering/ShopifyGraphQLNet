@@ -1,4 +1,4 @@
-﻿namespace ShopifyGraphQLNet.Types.Checkout.Arguments;
+﻿namespace ShopifyGraphQLNet.Types;
 
 /// <summary>
 /// Specifies the fields accepted to create or update a mailing address.
@@ -34,7 +34,7 @@ public class MailingAddressInput
     /// </summary>
     public string? LastName { get; set; }
     /// <summary>
-    ///     A unique phone number for the customer.
+    /// A unique phone number for the customer.
     /// Formatted using E.164 standard. For example, +16135551111.
     /// </summary>
     public string? Phone { get; set; }

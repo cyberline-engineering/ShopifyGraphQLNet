@@ -54,4 +54,6 @@ public class Metafield: INode
     /// The value of a metafield.
     /// </summary>
     public string Value { get; set; } = default!;
+
+    internal dynamic? _arguments { get; set; }
 }
