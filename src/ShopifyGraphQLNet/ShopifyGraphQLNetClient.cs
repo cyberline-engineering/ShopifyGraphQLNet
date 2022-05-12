@@ -20,15 +20,15 @@ namespace ShopifyGraphQLNet
             this.logger = logger;
         }
 
-        public async Task<QueryResult<T>> ExecuteQuery<T>(T value, string root, string? query = default, string? operationName = default, CancellationToken ct = default)
+        public async Task<QueryResult<T>> ExecuteQuery<T>(T value, string operationName, string? query = default, CancellationToken ct = default)
         {
-            query ??= QueryBuilder.Build(value, root, operationName);
             var variables = QueryBuilder.GetArguments(value);
+            query ??= QueryBuilder.Build(value, operationName, variables);
 
             using var request = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                Content = JsonContent.Create(new { query, variables }, options: serializerOptions)
+                Content = JsonContent.Create(new { query = $"query {query}", variables, operationName }, options: serializerOptions)
             };
 
             using var response = await client.SendAsync(request, ct).ConfigureAwait(false);
@@ -39,7 +39,30 @@ namespace ShopifyGraphQLNet
                 return QueryResultExtensions.Failed<T>(content);
             }
 
-            var result = await response.ToResult<T>(root, serializerOptions, ct);
+            var result = await response.ToResult<T>(operationName, serializerOptions, ct);
+
+            return result;
+        }
+
+        public async Task<QueryResult<T>> ExecuteMutation<T>(T value, object variables, string operationName, string? mutation = default, CancellationToken ct = default)
+        {
+            mutation ??= QueryBuilder.Build(value, operationName, variables);
+
+            using var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                Content = JsonContent.Create(new { query = $"mutation {mutation}", variables, operationName }, options: serializerOptions)
+            };
+
+            using var response = await client.SendAsync(request, ct).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await logger.LogIfErrorResponse(response).ConfigureAwait(false);
+                return QueryResultExtensions.Failed<T>(content);
+            }
+
+            var result = await response.ToResult<T>(operationName, serializerOptions, ct);
 
             return result;
         }

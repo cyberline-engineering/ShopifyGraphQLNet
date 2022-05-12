@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ShopifyGraphQLNet.Types.Checkout;
 using ShopifyGraphQLNet.Types.Checkout.Arguments;
@@ -25,7 +21,9 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         public Task<QueryResult<CheckoutCreatePayload>> Create(CheckoutCreateArguments arguments,
             CancellationToken ct = default)
         {
-            return Task.FromResult(new QueryResult<CheckoutCreatePayload>());
+            logger.LogTrace("Create. CheckoutCreateArguments: {@checkoutCreateArguments}", arguments);
+
+            return client.ExecuteMutation(CheckoutCreatePayload.Default, arguments, "checkoutCreate", ct: ct);
         }
     }
 }

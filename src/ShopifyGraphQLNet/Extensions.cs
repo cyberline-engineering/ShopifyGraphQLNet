@@ -51,6 +51,7 @@ namespace ShopifyGraphQLNet
             if (config.ApiVersion.Value == ShopifyApiVersionExtensions.V2022_04.Value)
             {
                 services.AddTransient<IProductService, StorefrontApi.V202204.ProductService>();
+                services.AddTransient<ICheckoutService, StorefrontApi.V202204.CheckoutService>();
             }
 
             return services;

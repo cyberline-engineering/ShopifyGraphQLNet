@@ -24,7 +24,7 @@ public class MailingAddress: INode
     /// </summary>
     public string? Company { get; set; }
     /// <summary>
-    /// The name of the customer's company or organization.
+    /// The name of the country.
     /// </summary>
     public string? Country { get; set; }
     /// <summary>

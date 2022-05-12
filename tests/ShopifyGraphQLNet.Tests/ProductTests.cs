@@ -53,8 +53,7 @@ namespace ShopifyGraphQLNet.Tests
         [Fact]
         public void ProductConnectionQueryBuilderTest()
         {
-            var query = QueryBuilder.Build(new ProductConnection(), "products", default,
-                new QueryBuildOptions() { PrettyPrint = true });
+            var query = QueryBuilder.Build(new ProductConnection(), "products", default, new QueryBuildOptions() { PrettyPrint = true });
 
             Assert.NotNull(query);
         }

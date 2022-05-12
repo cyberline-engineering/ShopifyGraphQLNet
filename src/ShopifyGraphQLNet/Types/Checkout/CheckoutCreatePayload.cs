@@ -1,4 +1,6 @@
-﻿namespace ShopifyGraphQLNet.Types.Checkout;
+﻿using ShopifyGraphQLNet.Helper;
+
+namespace ShopifyGraphQLNet.Types.Checkout;
 
 /// <summary>
 /// Create checkout result payload
@@ -17,4 +19,7 @@ public class CheckoutCreatePayload
     /// The checkout queue token. Available only to selected stores.
     /// </summary>
     public string? QueueToken { get; set; }
+
+    public static readonly CheckoutCreatePayload Default = new()
+        { Checkout = new() { WebUrl = TypeHelper.DefaultUrl, LineItems = CheckoutLineItemConnection.Default, Id = String.Empty} };
 }

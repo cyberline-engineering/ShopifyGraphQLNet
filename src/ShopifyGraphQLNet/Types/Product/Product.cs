@@ -1,4 +1,5 @@
 ﻿using ShopifyGraphQLNet.Types.Interface;
+using ShopifyGraphQLNet.Types.Product.Arguments;
 
 namespace ShopifyGraphQLNet.Types.Product
 {
@@ -123,11 +124,12 @@ namespace ShopifyGraphQLNet.Types.Product
         /// </summary>
         public ProductVariantConnection Variants { get; set; } = default!;
 
-        internal dynamic? _arguments { get; set; }
+        internal ProductGetArguments? _arguments { get; set; }
     }
 
     public class ProductVariantConnection : Connection<ProductVariant>
     {
-        internal static readonly ProductVariantConnection Default = new() { _arguments = ConnectionArguments.Default, Nodes = Array.Empty<ProductVariant>()};
+        internal static readonly ProductVariantConnection Default = new()
+            { _arguments = ConnectionArguments.Default, Nodes = Array.Empty<ProductVariant>() };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -13,8 +14,7 @@ namespace ShopifyGraphQLNet.Helper
     {
         private const string ArgumentsPropertyName = "_arguments";
 
-        public static string Build<T>(T value, string root, string? operationName = default,
-            QueryBuildOptions? options = default)
+        public static string Build<T>(T value, string? operationName, object? arguments, QueryBuildOptions? options = default)
         {
             if (value == null)
             {
@@ -25,26 +25,28 @@ namespace ShopifyGraphQLNet.Helper
             var builder = new StringBuilder();
             var level = 0;
 
-            var arguments = GetArgumentValues(value, options).ToArray();
+            arguments ??= GetArguments(value);
+            var argumentValues = GetArgumentValues(arguments, options).ToArray();
 
-            if (arguments.Length > 0)
+            var root = operationName;
+            if (argumentValues.Length > 0)
             {
                 if (!String.IsNullOrWhiteSpace(operationName))
                 {
-                    var argValues = String.Join(", ", arguments.Select(x => $"{x.name}: ${x.name}"));
-                    var argTypes = String.Join(", ", arguments.Select(x => $"${x.name}: {x.type}"));
+                    var argValues = String.Join(", ", argumentValues.Select(x => $"{x.name}: ${x.name}"));
+                    var argTypes = String.Join(", ", argumentValues.Select(x => $"${x.name}: {x.type}"));
 
+                    root = $"{operationName}({argValues})";
                     operationName = $"{operationName}({argTypes})";
-                    root = $"{root}({argValues})";
                 }
                 else
                 {
-                    var argValues = String.Join(", ", arguments.Select(x => $"{x.name}: {x.value}"));
-                    root = $"{root}({argValues})";
+                    var argValues = String.Join(", ", argumentValues.Select(x => $"{x.name}: {x.value}"));
+                    root = $"{operationName}({argValues})";
                 }
             }
 
-            AppendValue(builder, $"query {operationName} {{", options.PrettyPrint, level++);
+            AppendValue(builder, $"{operationName} {{", options.PrettyPrint, level++);
             AppendValue(builder, $"{root} {{", options.PrettyPrint, level++);
 
             BuildType(value, value.GetType(), options, builder, ref level);
@@ -55,11 +57,9 @@ namespace ShopifyGraphQLNet.Helper
             return builder.ToString();
         }
 
-        private static IEnumerable<(string name, string type, string value)> GetArgumentValues(object? value,
+        private static IEnumerable<(string name, string type, string value)> GetArgumentValues(object? arguments,
             QueryBuildOptions options)
         {
-            var arguments = GetArguments(value);
-
             if (arguments == null) return Enumerable.Empty<(string name, string type, string value)>();
 
             var argProperties = arguments.GetType().GetProperties()
@@ -74,7 +74,11 @@ namespace ShopifyGraphQLNet.Helper
         private static void BuildType(object? value, Type type, QueryBuildOptions options, StringBuilder builder, ref int level)
         {
             var properties = type.GetProperties()
-                .Where(x => !x.Name.Equals(ArgumentsPropertyName) && (value == default || x.GetValue(value) != null));
+                .Where(x => !x.Name.Equals(ArgumentsPropertyName) && (value == default || x.GetValue(value) != null))
+#if DEBUG
+                .ToArray()
+#endif
+                ;
 
             foreach (var property in properties)
             {
@@ -88,18 +92,33 @@ namespace ShopifyGraphQLNet.Helper
                     continue;
                 }
 
-                var pt = propertyType.IsArray ? propertyType.GetElementType()! : propertyType;
                 var propertyValue = value != default
                     ? property.GetValue(value)!
                     : default;
 
+                var pt = propertyType;
+                var pv = propertyValue;
+
                 if (propertyType.IsArray)
                 {
-                    var array = (Array)property.GetValue(value)!;
-                    propertyValue = array.Length == 0 ? null : array.GetValue(0);
+                    pt = propertyType.GetElementType()!;
                 }
 
-                var arguments = GetArgumentValues(propertyValue, options).ToArray();
+                if (value != null)
+                {
+                    if (propertyType.IsArray)
+                    {
+                        var array = (Array)property.GetValue(value)!;
+                        pv = array.Length == 0 ? null : array.GetValue(0);
+                    }
+                    else if (typeof(IEnumerable).IsAssignableFrom(propertyType))
+                    {
+                        var enumerable = (IEnumerable<object>)property.GetValue(value)!;
+                        pv = enumerable.FirstOrDefault();
+                    }
+                }
+
+                var arguments = GetArgumentValues(GetArguments(propertyValue), options).ToArray();
 
                 if (arguments.Length > 0)
                 {
@@ -108,7 +127,7 @@ namespace ShopifyGraphQLNet.Helper
                 }
 
                 AppendValue(builder, $"{propertyName} {{", options.PrettyPrint, level++);
-                BuildType(propertyValue, pt, options, builder, ref level);
+                BuildType(pv, pt, options, builder, ref level);
                 level--;
                 AppendValue(builder, "}", options.PrettyPrint, level);
             }
@@ -131,17 +150,27 @@ namespace ShopifyGraphQLNet.Helper
 
         private static string GetPropertyGraphType(this PropertyInfo property)
         {
-            if (property.GetCustomAttribute<IdGraphType>() != default) return "ID";
+            var notNull = property.GetCustomAttribute<RequiredAttribute>() != default;
+            string typeName;
 
-            var type = property.PropertyType.GetUnderlyingType();
-
-            return type.Name switch
+            if (property.GetCustomAttribute<IdGraphType>() != default)
             {
-                nameof(Int16) => "Int",
-                nameof(Int32) => "Int",
-                nameof(Int64) => "Int",
-                _ => type.Name
-            };
+                typeName = "ID";
+            }
+            else
+            {
+                var type = property.PropertyType.GetUnderlyingType();
+
+                typeName = type.Name switch
+                {
+                    nameof(Int16) => "Int",
+                    nameof(Int32) => "Int",
+                    nameof(Int64) => "Int",
+                    _ => type.Name
+                };
+            }
+
+            return notNull ? $"{typeName}!" : typeName;
         }
 
         private static void AppendValue(this StringBuilder builder, string value, bool prettyPrint, int level)

@@ -18,11 +18,11 @@ public class Checkout: INode
     /// The available shipping rates for this Checkout.
     /// Should only be used when checkout requiresShipping is true and the shipping address is valid.
     /// </summary>
-    public AvailableShippingRates AvailableShippingRates { get; set; }
+    public AvailableShippingRates AvailableShippingRates { get; set; } = default!;
     /// <summary>
     /// The identity of the customer associated with the checkout.
     /// </summary>
-    public CheckoutBuyerIdentity BuyerIdentity { get; set; }
+    public CheckoutBuyerIdentity BuyerIdentity { get; set; } = default!;
     /// <summary>
     /// The date and time when the checkout was completed.
     /// </summary>
@@ -118,19 +118,21 @@ public class Checkout: INode
     /// <summary>
     /// The url pointing to the checkout accessible from the web.
     /// </summary>
-    public Uri WebUrl { get; set; }
+    public Uri WebUrl { get; set; } = default!;
 
     /// <summary>
     /// Discounts that have been applied on the checkout.
     /// </summary>
-    public DiscountApplications DiscountApplications { get; set; } = default!;
+    public DiscountApplicationConnection DiscountApplicationConnection { get; set; } = default!;
     /// <summary>
     /// A list of line item objects, each one containing information about an item in the checkout.
     /// </summary>
-    public CheckoutLineItems LineItems { get; set; }
+    public CheckoutLineItemConnection LineItems { get; set; } = default!;
 }
 
-public class CheckoutLineItems: List<CheckoutLineItem>
+/// <inheritdoc />
+public class CheckoutLineItemConnection : Connection<CheckoutLineItem>
 {
-    internal ConnectionArguments _arguments { get; set; } = ConnectionArguments.Default;
+    public static readonly CheckoutLineItemConnection Default = new()
+        { Nodes = Array.Empty<CheckoutLineItem>(), _arguments = ConnectionArguments.Default };
 }

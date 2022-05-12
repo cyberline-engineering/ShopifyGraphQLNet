@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ShopifyGraphQLNet.Types.Checkout.Arguments;
 
@@ -16,10 +16,12 @@ public class CheckoutCreateInput
     /// <summary>
     /// The identity of the customer associated with the checkout.
     /// </summary>
+    [Required]
     public CheckoutBuyerIdentityInput? BuyerIdentity { get; set; }
     /// <summary>
     /// A list of extra information that is added to the checkout.
     /// </summary>
+    [Required]
     public AttributeInput[]? CustomAttributes { get; set; }
     /// <summary>
     /// The email with which the customer wants to checkout.
@@ -28,6 +30,7 @@ public class CheckoutCreateInput
     /// <summary>
     /// A list of line item objects, each one containing information about an item in the checkout.
     /// </summary>
+    [Required]
     public CheckoutLineItemInput[]? LineItems { get; set; }
     /// <summary>
     /// The text of an optional note that a shop owner can attach to the checkout.
@@ -43,5 +46,6 @@ public class CheckoutCreateInput
     /// <summary>
     /// The shipping address to where the line items will be shipped.
     /// </summary>
+    [Required]
     public MailingAddressInput? ShippingAddress { get; set; }
 }

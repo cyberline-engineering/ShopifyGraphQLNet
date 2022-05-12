@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using ShopifyGraphQLNet.Types;
 using ShopifyGraphQLNet.Types.Product;
 using ShopifyGraphQLNet.Types.Product.Arguments;
 using ShopifyGraphQLNet.Types.Query;
@@ -26,7 +27,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
                 {
                     _arguments = arguments,
                     Nodes = new[] { new Product() { Variants = ProductVariantConnection.Default } }
-                }, "products", null, "listProducts", ct);
+                }, "products", ct: ct);
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
                 {
                     _arguments = arguments,
                     Variants = ProductVariantConnection.Default
-                }, "product", null, "getProductById", ct);
+                }, "product", ct: ct);
         }
     }
 }

@@ -17,7 +17,7 @@ public class Connection<T>
     /// <inheritdoc cref="PageInfo"/>
     public PageInfo PageInfo { get; set; } = default!;
 
-    internal virtual dynamic? _arguments { get; set; }
+    internal virtual ConnectionArguments? _arguments { get; set; }
 }
 
 /// <summary>

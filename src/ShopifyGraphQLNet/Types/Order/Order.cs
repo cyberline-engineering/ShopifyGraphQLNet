@@ -138,19 +138,23 @@ public class Order: INode, IHasMetafields
     /// <summary>
     /// Discounts that have been applied on the order.
     /// </summary>
-    public DiscountApplications DiscountApplications { get; set; } = default!;
+    public DiscountApplicationConnection DiscountApplications { get; set; } = default!;
     /// <summary>
     /// List of the order’s line items.
     /// </summary>
-    public OrderLineItems LineItems { get; set; } = default!;
+    public OrderLineItemConnection LineItems { get; set; } = default!;
 }
 
-public class OrderLineItems: List<OrderLineItem>
+/// <inheritdoc />
+public class OrderLineItemConnection : Connection<OrderLineItem>
 {
-    internal ConnectionArguments _arguments { get; set; } = ConnectionArguments.Default;
+    public static readonly OrderLineItemConnection Default = new()
+        { Nodes = Array.Empty<OrderLineItem>(), _arguments = ConnectionArguments.Default };
 }
 
-public class DiscountApplications: List<DiscountApplication>
+/// <inheritdoc />
+public class DiscountApplicationConnection : Connection<DiscountApplication>
 {
-    internal ConnectionArguments _arguments { get; set; } = ConnectionArguments.Default;
+    public static readonly DiscountApplicationConnection Default = new()
+        { Nodes = Array.Empty<DiscountApplication>(), _arguments = ConnectionArguments.Default };
 }
