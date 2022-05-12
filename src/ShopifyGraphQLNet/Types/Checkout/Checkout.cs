@@ -1,4 +1,5 @@
-﻿using ShopifyGraphQLNet.Types;
+﻿using ShopifyGraphQLNet.Helper;
+using ShopifyGraphQLNet.Types;
 using ShopifyGraphQLNet.Types.Interface;
 using ShopifyGraphQLNet.Types.Order;
 
@@ -128,6 +129,16 @@ public class Checkout: INode
     /// A list of line item objects, each one containing information about an item in the checkout.
     /// </summary>
     public CheckoutLineItemConnection LineItems { get; set; } = default!;
+
+    public static readonly Checkout Default = new()
+    {
+        WebUrl = TypeHelper.DefaultUrl,
+        LineItems = CheckoutLineItemConnection.Default,
+        Id = String.Empty,
+        AvailableShippingRates = AvailableShippingRates.Default,
+        ShippingAddress = MailingAddress.Default,
+        ShippingLine = ShippingRate.Default,
+    };
 }
 
 /// <inheritdoc />

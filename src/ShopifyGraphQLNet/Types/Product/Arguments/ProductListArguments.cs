@@ -22,6 +22,8 @@ public class ProductListArguments: ConnectionArguments
     /// Sort the underlying list by the given key.
     /// </summary>
     public ProductSortKey? SortKey { get; set; }
+
+    public new static readonly ProductListArguments Default = new() { First = 100 };
 }
 
 /// <summary>

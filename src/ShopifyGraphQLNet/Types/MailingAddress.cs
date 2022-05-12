@@ -80,6 +80,28 @@ public class MailingAddress: INode
     /// The zip or postal code of the address.
     /// </summary>
     public string? Zip { get; set; }
+
+    public static readonly MailingAddress Default = new()
+    {
+        Name = String.Empty,
+        Address1 = String.Empty,
+        Address2 = String.Empty,
+        City = String.Empty,
+        Country = String.Empty,
+        CountryCodeV2 = CountryCode.US,
+        Id = String.Empty,
+        ProvinceCode = String.Empty,
+        Zip = String.Empty,
+        FirstName = String.Empty,
+        LastName = String.Empty,
+        FormattedArea = String.Empty,
+        Phone = String.Empty,
+        Province = String.Empty,
+        Company = String.Empty,
+        Latitude = 0.0,
+        Longitude = 0.0,
+        //Formatted = MailingAddressFormatted.Default
+    };
 }
 
 public class MailingAddressFormatted : List<string>
@@ -87,5 +109,7 @@ public class MailingAddressFormatted : List<string>
     /// <summary>
     /// A formatted version of the address, customized by the provided arguments.
     /// </summary>
-    internal dynamic? _arguments { get; set; } = new { withName = false, withCompany = false };
+    internal dynamic? _arguments { get; set; } = new { withName = true, withCompany = true };
+
+    public static readonly MailingAddressFormatted Default = new();
 }

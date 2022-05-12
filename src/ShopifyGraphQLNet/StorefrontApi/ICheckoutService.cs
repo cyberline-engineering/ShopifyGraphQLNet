@@ -20,5 +20,14 @@ namespace ShopifyGraphQLNet.StorefrontApi
         /// <returns></returns>
         Task<QueryResult<CheckoutCreatePayload>> Create(CheckoutCreateArguments arguments,
             CancellationToken ct = default);
+
+        /// <summary>
+        /// Updates the shipping address of an existing checkout.
+        /// Requires unauthenticated_write_checkouts access scope.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<QueryResult<CheckoutShippingAddressUpdateV2Payload>> ShippingAddressUpdate(CheckoutShippingAddressUpdateV2Arguments arguments, CancellationToken ct = default);
     }
 }

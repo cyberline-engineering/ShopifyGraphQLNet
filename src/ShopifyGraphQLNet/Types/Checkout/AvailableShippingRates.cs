@@ -13,4 +13,7 @@ public class AvailableShippingRates
     /// The fetched shipping rates. null until the ready field is true.
     /// </summary>
     public ShippingRate[]? ShippingRates { get; set; }
+
+    public static readonly AvailableShippingRates Default = new ()
+        { ShippingRates = Array.Empty<ShippingRate>() };
 }

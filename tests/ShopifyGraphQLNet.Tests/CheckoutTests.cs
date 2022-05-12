@@ -10,15 +10,21 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ShopifyGraphQLNet.StorefrontApi;
 using ShopifyGraphQLNet.Types;
+using ShopifyGraphQLNet.Types.Checkout;
 using ShopifyGraphQLNet.Types.Checkout.Arguments;
+using ShopifyGraphQLNet.Types.Product;
+using ShopifyGraphQLNet.Types.Product.Arguments;
+using ShopifyGraphQLNet.Types.Query;
 using Xunit;
 
 namespace ShopifyGraphQLNet.Tests
 {
-    public class CheckoutTests
+    public class CheckoutTests: IAsyncLifetime
     {
         private readonly ICheckoutService checkoutService;
         private readonly IProductService productService;
+        private ProductConnection products;
+        private CheckoutCreatePayload checkoutPayload;
 
         public CheckoutTests()
         {
@@ -47,18 +53,13 @@ namespace ShopifyGraphQLNet.Tests
         [Fact]
         public async Task CreateCheckoutTest()
         {
-            var products = await productService.List(new() { First = 2 });
-            products.Assert();
-
-            var lineItems = products.Payload!.Nodes.Select(x => new CheckoutLineItemInput()
+            var lineItems = products.Nodes.Take(2).Select(x => new CheckoutLineItemInput()
                 { VariantId = x.Variants.Nodes.First().Id, Quantity = 1 }).ToArray();
 
             var checkoutInput = new CheckoutCreateArguments()
             {
                 Input = new()
                 {
-                    BuyerIdentity = new() { CountryCode = CountryCode.US },
-                    CustomAttributes = Array.Empty<AttributeInput>(),
                     LineItems = lineItems,
                     ShippingAddress = Extensions.TestAddress,
                 }
@@ -69,6 +70,51 @@ namespace ShopifyGraphQLNet.Tests
             result.Assert();
             Assert.Null(result.Payload!.CheckoutUserErrors);
             Assert.NotNull(result.Payload.Checkout);
+        }
+
+        [Fact]
+        public async Task UpdateShippingAddressTest()
+        {
+            var arguments = new CheckoutShippingAddressUpdateV2Arguments()
+            {
+                CheckoutId = checkoutPayload.Checkout.Id,
+                ShippingAddress = Extensions.TestAddress2,
+            };
+
+            var result = await checkoutService.ShippingAddressUpdate(arguments);
+            var address = result.Payload?.Checkout.ShippingAddress;
+
+            result.Assert();
+            Assert.NotNull(address);
+            Assert.Equal(Extensions.TestAddress2.Address1, address!.Address1);
+        }
+
+        public async Task InitializeAsync()
+        {
+            var productsResult = await productService.List(ProductListArguments.Default);
+            products = productsResult.Payload!;
+
+            var lineItems = products.Nodes.Take(10).Select(x => new CheckoutLineItemInput()
+                { VariantId = x.Variants.Nodes.First().Id, Quantity = 1 }).ToArray();
+
+            var checkoutInput = new CheckoutCreateArguments()
+            {
+                Input = new()
+                {
+                    LineItems = lineItems,
+                    ShippingAddress = Extensions.TestAddress
+                }
+            };
+
+            var checkoutResult = await checkoutService.Create(checkoutInput);
+            checkoutPayload = checkoutResult.Payload!;
+        }
+
+        public Task DisposeAsync()
+        {
+            //remove checkout
+
+            return Task.CompletedTask;
         }
     }
 }

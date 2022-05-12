@@ -22,11 +22,7 @@ public class CheckoutCreatePayload
 
     public static readonly CheckoutCreatePayload Default = new()
     {
-        Checkout = new()
-        {
-            WebUrl = TypeHelper.DefaultUrl, LineItems = CheckoutLineItemConnection.Default, Id = String.Empty,
-            Order = Order.Order.Default
-        },
+        Checkout = Checkout.Default,
         QueueToken = String.Empty
     };
 }

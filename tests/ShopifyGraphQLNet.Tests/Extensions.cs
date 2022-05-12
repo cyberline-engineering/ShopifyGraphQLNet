@@ -29,5 +29,17 @@ namespace ShopifyGraphQLNet.Tests
             Zip = "60609",
             Country = "US"
         };
+
+        public static readonly MailingAddressInput TestAddress2 = new()
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            Address1 = "136 Georgia Ave",
+            City = "San Bruno",
+            Province = "CA",
+            Zip = "94066",
+            Phone = "4086179562",
+            Country = "USA"
+        };
     }
 }

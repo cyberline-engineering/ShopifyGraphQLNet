@@ -13,4 +13,6 @@ public class MoneyV2
     /// Currency of the money.
     /// </summary>
     public CurrencyCode CurrencyCode { get; set; }
+
+    public static readonly MoneyV2 Default = new();
 }

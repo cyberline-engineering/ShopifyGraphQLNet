@@ -1,5 +1,8 @@
 ﻿namespace ShopifyGraphQLNet.Types.Checkout;
 
+/// <summary>
+/// A shipping rate to be applied to a checkout.
+/// </summary>
 public class ShippingRate
 {
     /// <summary>
@@ -14,4 +17,7 @@ public class ShippingRate
     /// Title of this shipping rate.
     /// </summary>
     public string Title { get; set; } = default!;
+
+    public static readonly ShippingRate Default = new()
+        { Handle = String.Empty, Title = String.Empty, PriceV2 = MoneyV2.Default };
 }

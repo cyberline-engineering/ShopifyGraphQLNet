@@ -29,30 +29,34 @@ namespace ShopifyGraphQLNet.Types.Query
         /// <summary>
         /// Shows error codes common to Shopify. Additional error codes may also be shown.
         /// </summary>
-        public ErrorExtensionsCode Code { get; set; }
+        public string Code { get; set; }
+        public string? ArgumentName { get; set; }
+        public string? ErrorMessage { get; set; }
+        public string? TypeName { get; set; }
+        public string? VariableName { get; set; }
     }
 
-    public enum ErrorExtensionsCode
-    {
-        /// <summary>
-        /// The client has exceeded the <see href="https://shopify.dev/api/storefront#rate-limits">rate limit</see>.
-        /// Similar to 429 Too Many Requests.
-        /// </summary>
-        THROTTLED,
-        /// <summary>
-        /// The client doesn’t have correct <see href="https://shopify.dev/api/storefront#authentication">authentication credentials</see>.
-        /// Similar to 401 Unauthorized.
-        /// </summary>
-        ACCESS_DENIED,
-        /// <summary>
-        /// The shop is not active. This can happen when stores repeatedly exceed API rate limits or due to fraud risk.
-        /// </summary>
-        SHOP_INACTIVE,
-        /// <summary>
-        /// Shopify experienced an internal error while processing the request. This error is returned instead of 500 Internal Server Error in most circumstances.
-        /// </summary>
-        INTERNAL_SERVER_ERROR
-    }
+    //public enum ErrorExtensionsCode
+    //{
+    //    /// <summary>
+    //    /// The client has exceeded the <see href="https://shopify.dev/api/storefront#rate-limits">rate limit</see>.
+    //    /// Similar to 429 Too Many Requests.
+    //    /// </summary>
+    //    THROTTLED,
+    //    /// <summary>
+    //    /// The client doesn’t have correct <see href="https://shopify.dev/api/storefront#authentication">authentication credentials</see>.
+    //    /// Similar to 401 Unauthorized.
+    //    /// </summary>
+    //    ACCESS_DENIED,
+    //    /// <summary>
+    //    /// The shop is not active. This can happen when stores repeatedly exceed API rate limits or due to fraud risk.
+    //    /// </summary>
+    //    SHOP_INACTIVE,
+    //    /// <summary>
+    //    /// Shopify experienced an internal error while processing the request. This error is returned instead of 500 Internal Server Error in most circumstances.
+    //    /// </summary>
+    //    INTERNAL_SERVER_ERROR
+    //}
 
     public class Location
     {
