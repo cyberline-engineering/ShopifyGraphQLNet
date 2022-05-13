@@ -151,21 +151,34 @@ namespace ShopifyGraphQLNet.Helper
         private static string GetPropertyGraphType(this PropertyInfo property)
         {
             var notNull = property.GetCustomAttribute<RequiredAttribute>() != default;
+            var propertyType = property.PropertyType;
             string typeName;
 
             if (property.GetCustomAttribute<IdGraphType>() != default)
             {
                 typeName = "ID";
             }
+            else if (propertyType.IsArray)
+            {
+                var type = propertyType.GetElementType() ?? propertyType;
+
+                typeName = $"[{type.Name}!]";
+            }
             else
             {
-                var type = property.PropertyType.GetUnderlyingType();
+                var type = propertyType.GetUnderlyingType();
 
                 typeName = type.Name switch
                 {
                     nameof(Int16) => "Int",
                     nameof(Int32) => "Int",
                     nameof(Int64) => "Int",
+
+                    nameof(Single) => "Float",
+                    nameof(Double) => "Float",
+
+                    nameof(DateTimeOffset) => "DateTime",
+
                     _ => type.Name
                 };
             }

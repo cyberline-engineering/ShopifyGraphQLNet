@@ -12,40 +12,32 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         public ProductService(ShopifyGraphQLNetClient client, ILogger<ProductService> logger): base(client, logger)
         { }
 
-        /// <summary>
-        /// List of the shop’s products.
-        /// </summary>
-        /// <param name="arguments"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, CancellationToken ct = default)
+        /// <inheritdoc />
+        public Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, ProductConnection? value = default, CancellationToken ct = default)
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            return client.ExecuteQuery(
-                new ProductConnection
-                {
-                    _arguments = arguments,
-                    Nodes = new[] { new Product() { Variants = ProductVariantConnection.Default } }
-                }, "products", ct: ct);
+            value ??= new ProductConnection
+            {
+                Nodes = new[] { new Product() { Variants = ProductVariantConnection.Default } }
+            };
+            value._arguments = arguments;
+
+            return client.ExecuteQuery(value, "products", ct: ct);
         }
 
-        /// <summary>
-        /// Fetch a specific Product by one of its unique attributes.
-        /// </summary>
-        /// <param name="arguments"></param>
-        /// <param name="ct"></param>
-        /// <returns></returns>
-        public Task<QueryResult<Product>> Get(ProductGetArguments arguments, CancellationToken ct = default)
+        /// <inheritdoc />
+        public Task<QueryResult<Product>> Get(ProductGetArguments arguments, Product? value = default, CancellationToken ct = default)
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            return client.ExecuteQuery(
-                new Product
-                {
-                    _arguments = arguments,
-                    Variants = ProductVariantConnection.Default
-                }, "product", ct: ct);
+            value ??= new Product
+            {
+                Variants = ProductVariantConnection.Default
+            };
+            value._arguments = arguments;
+
+            return client.ExecuteQuery(value, "product", ct: ct);
         }
     }
 }
