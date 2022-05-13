@@ -50,7 +50,7 @@ public class Collection: INode, IHasMetafields
     /// <summary>
     /// List of products in the collection.
     /// </summary>
-    public ProductConnection Products { get; set; }
+    public ProductConnection Products { get; set; } = default!;
 
     public static readonly Collection Default = new()
     {
