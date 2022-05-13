@@ -1,4 +1,6 @@
-﻿namespace ShopifyGraphQLNet.Types;
+﻿using ShopifyGraphQLNet.Helper;
+
+namespace ShopifyGraphQLNet.Types;
 
 /// <summary>
 /// Represents an image resource.
@@ -28,4 +30,7 @@ public class Image
     /// The original width of the image in pixels. Returns null if the image is not hosted by Shopify.
     /// </summary>
     public int? Width { get; set; }
+
+    public static readonly Image Default = new()
+        { Id = String.Empty, AltText = String.Empty, Height = 0, Width = 0, Url = TypeHelper.DefaultUrl };
 }

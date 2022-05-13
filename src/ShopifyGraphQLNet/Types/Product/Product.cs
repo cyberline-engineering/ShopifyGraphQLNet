@@ -1,4 +1,5 @@
-﻿using ShopifyGraphQLNet.Types.Interface;
+﻿using ShopifyGraphQLNet.Helper;
+using ShopifyGraphQLNet.Types.Interface;
 using ShopifyGraphQLNet.Types.Product.Arguments;
 
 namespace ShopifyGraphQLNet.Types.Product
@@ -125,6 +126,21 @@ namespace ShopifyGraphQLNet.Types.Product
         public ProductVariantConnection Variants { get; set; } = default!;
 
         internal ProductGetArguments? _arguments { get; set; }
+
+        public static readonly Product Default = CreateDefault();
+
+        internal static Product CreateDefault()
+        {
+            return new()
+            {
+                Variants = ProductVariantConnection.Default, Description = String.Empty, DescriptionHtml = String.Empty,
+                FeaturedImage = Image.Default, Id = String.Empty, Handle = String.Empty,
+                Options = Array.Empty<ProductOption>(), Title = String.Empty, ProductType = String.Empty,
+                Tags = Array.Empty<string>(), TotalInventory = 0, Vendor = String.Empty,
+                CompareAtPriceRange = ProductPriceRange.Default, OnlineStoreUrl = TypeHelper.DefaultUrl,
+                PriceRange = ProductPriceRange.Default, Seo = Seo.Default
+            };
+        }
     }
 
     public class ProductVariantConnection : Connection<ProductVariant>

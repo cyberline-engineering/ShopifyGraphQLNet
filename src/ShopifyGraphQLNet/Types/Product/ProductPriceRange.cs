@@ -13,4 +13,7 @@ public class ProductPriceRange
     /// The lowest variant's price.
     /// </summary>
     public MoneyV2 MinVariantPrice { get; set; }
+
+    public static readonly ProductPriceRange Default = new()
+        { MinVariantPrice = MoneyV2.Default, MaxVariantPrice = MoneyV2.Default };
 }

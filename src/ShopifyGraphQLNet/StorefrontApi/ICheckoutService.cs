@@ -76,5 +76,17 @@ namespace ShopifyGraphQLNet.StorefrontApi
         Task<QueryResult<CheckoutShippingLineUpdatePayload>> ShippingLineUpdate(
             CheckoutShippingLineUpdateArguments arguments, CheckoutShippingLineUpdatePayload? value = default,
             CancellationToken ct = default);
+
+        /// <summary>
+        /// Completes a checkout with a tokenized payment.
+        /// Requires unauthenticated_write_checkouts access scope.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="value"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<QueryResult<CheckoutCompleteWithTokenizedPaymentV3Payload>> CheckoutCompleteWithTokenizedPaymentV3(
+            CheckoutCompleteWithTokenizedPaymentV3Arguments arguments, CheckoutCompleteWithTokenizedPaymentV3Payload? value = default,
+            CancellationToken ct = default);
     }
 }

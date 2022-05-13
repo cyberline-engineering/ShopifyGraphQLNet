@@ -23,8 +23,8 @@ namespace ShopifyGraphQLNet.Tests
     {
         private readonly ICheckoutService checkoutService;
         private readonly IProductService productService;
-        private ProductConnection products;
-        private CheckoutCreatePayload checkoutPayload;
+        private ProductConnection products = default!;
+        private CheckoutCreatePayload checkoutPayload = default!;
 
         public CheckoutTests()
         {
@@ -87,8 +87,29 @@ namespace ShopifyGraphQLNet.Tests
                 ShippingAddress = shippingAddress,
             };
 
-            var result = checkoutService.ShippingAddressUpdate(arguments);
-            return result;
+            return checkoutService.ShippingAddressUpdate(arguments);
+        }
+
+        private Task<QueryResult<CheckoutShippingLineUpdatePayload>> ShippingLineUpdate(string shippingRateHandle)
+        {
+            var arguments = new CheckoutShippingLineUpdateArguments()
+            {
+                CheckoutId = checkoutPayload.Checkout.Id,
+                ShippingRateHandle = shippingRateHandle
+            };
+
+            return checkoutService.ShippingLineUpdate(arguments);
+        }
+
+        private Task<QueryResult<CheckoutEmailUpdateV2Payload>> EmailUpdate(string email)
+        {
+            var arguments = new CheckoutEmailUpdateV2Arguments()
+            {
+                CheckoutId = checkoutPayload.Checkout.Id,
+                Email = email
+            };
+
+            return checkoutService.EmailUpdate(arguments);
         }
 
         [Fact]
@@ -117,9 +138,9 @@ namespace ShopifyGraphQLNet.Tests
         public async Task ShippingAddressUpdateTest()
         {
             var result = await ShippingAddressUpdate(Extensions.TestAddress2);
-            var address = result.Payload?.Checkout.ShippingAddress;
-
             result.Assert();
+            
+            var address = result.Payload?.Checkout.ShippingAddress;
             Assert.NotNull(address);
             Assert.Equal(Extensions.TestAddress2.Address1, address!.Address1);
         }
@@ -127,18 +148,13 @@ namespace ShopifyGraphQLNet.Tests
         [Fact]
         public async Task EmailUpdateTest()
         {
-            var arguments = new CheckoutEmailUpdateV2Arguments()
-            {
-                CheckoutId = checkoutPayload.Checkout.Id,
-                Email = "john@doe.com"
-            };
-
-            var result = await checkoutService.EmailUpdate(arguments);
-            var email = result.Payload?.Checkout.Email;
-
+            var arguments = "john@doe.com";
+            var result = await EmailUpdate(arguments);
             result.Assert();
+
+            var email = result.Payload?.Checkout.Email;
             Assert.NotNull(email);
-            Assert.Equal(arguments.Email, email);
+            Assert.Equal(arguments, email);
         }
 
         [Fact]
@@ -157,13 +173,13 @@ namespace ShopifyGraphQLNet.Tests
             };
 
             var result = await checkoutService.LineItemsUpdate(arguments);
-            var li = result.Payload?.Checkout.LineItems;
-
             result.Assert();
+
+            var li = result.Payload?.Checkout.LineItems;
             Assert.NotEmpty(li!.Nodes);
+
             var source = lineItems.First();
             var dest = li.Nodes.First();
-
             Assert.Equal(source.Quantity, dest.Quantity);
         }
 
@@ -175,7 +191,6 @@ namespace ShopifyGraphQLNet.Tests
                 VariantId = x.Variant!.Id,
                 Quantity = 2
             }).ToArray();
-
             var arguments = new CheckoutLineItemsReplaceArguments()
             {
                 CheckoutId = checkoutPayload.Checkout.Id,
@@ -183,13 +198,13 @@ namespace ShopifyGraphQLNet.Tests
             };
 
             var result = await checkoutService.LineItemsReplace(arguments);
-            var li = result.Payload?.Checkout.LineItems;
-
             result.Assert();
+
+            var li = result.Payload?.Checkout.LineItems;
             Assert.NotEmpty(li!.Nodes);
+
             var source = lineItems.First();
             var dest = li.Nodes.First();
-
             Assert.Equal(source.Quantity, dest.Quantity);
         }
 
@@ -197,21 +212,46 @@ namespace ShopifyGraphQLNet.Tests
         public async Task ShippingLineUpdateTest()
         {
             var checkout = await ShippingAddressUpdate(Extensions.TestAddress2);
-
             var shippingRate = checkout.Payload!.Checkout.AvailableShippingRates.ShippingRates!.Last();
-
-            var arguments = new CheckoutShippingLineUpdateArguments()
-            {
-                CheckoutId = checkoutPayload.Checkout.Id,
-                ShippingRateHandle = shippingRate.Handle
-            };
-
-            var result = await checkoutService.ShippingLineUpdate(arguments);
-            var shippingLine = result.Payload!.Checkout.ShippingLine;
+            var result = await ShippingLineUpdate(shippingRate.Handle);
 
             result.Assert();
+
+            var shippingLine = result.Payload!.Checkout.ShippingLine;
             Assert.NotNull(shippingLine);
             Assert.Equal(shippingRate.Handle, shippingLine!.Handle);
+        }
+
+        [Fact]
+        public async Task CompleteWithTokenizedPaymentV3Test()
+        {
+            var checkout = await ShippingAddressUpdate(Extensions.TestAddress2);
+            var shippingRate = checkout.Payload!.Checkout.AvailableShippingRates.ShippingRates!.Last();
+            var shipping = await ShippingLineUpdate(shippingRate.Handle);
+            var email = await EmailUpdate("john@doe.com");
+
+            var payment = new TokenizedPaymentInputV3()
+            {
+                PaymentAmount = new() {Amount = email.Payload!.Checkout.TotalPriceV2.Amount, CurrencyCode = email.Payload!.Checkout.TotalPriceV2.CurrencyCode},
+                BillingAddress = Extensions.TestAddress2,
+                IdempotencyKey = Guid.NewGuid().ToString(),
+                Test = true,
+                Type = PaymentTokenType.SHOPIFY_PAY,
+                PaymentData = "tok_1Ejt4eLgiPhRqvr3SQdtLvSW"
+            };
+            var arguments = new CheckoutCompleteWithTokenizedPaymentV3Arguments()
+            {
+                CheckoutId = checkoutPayload.Checkout.Id,
+                Payment = payment
+            };
+
+            var result = await checkoutService.CheckoutCompleteWithTokenizedPaymentV3(arguments);
+            result.Assert();
+
+            var pm = result.Payload!.Payment;
+            Assert.NotNull(pm);
+            Assert.Equal(payment.IdempotencyKey, pm.IdempotencyKey);
+            Assert.Equal(payment.PaymentAmount.Amount, pm.AmountV2.Amount);
         }
     }
 }

@@ -13,4 +13,6 @@ public class Seo
     /// The SEO title.
     /// </summary>
     public string? Title { get; set; }
+
+    public static readonly Seo Default = new() { Description = String.Empty, Title = String.Empty };
 }

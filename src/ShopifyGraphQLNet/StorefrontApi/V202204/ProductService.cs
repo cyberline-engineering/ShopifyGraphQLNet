@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using ShopifyGraphQLNet.Types;
 using ShopifyGraphQLNet.Types.Product;
 using ShopifyGraphQLNet.Types.Product.Arguments;
 using ShopifyGraphQLNet.Types.Query;
@@ -19,7 +18,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
 
             value ??= new ProductConnection
             {
-                Nodes = new[] { new Product() { Variants = ProductVariantConnection.Default } }
+                Nodes = new[] { Product.Default }
             };
             value._arguments = arguments;
 
@@ -31,10 +30,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            value ??= new Product
-            {
-                Variants = ProductVariantConnection.Default
-            };
+            value ??= Product.CreateDefault();
             value._arguments = arguments;
 
             return client.ExecuteQuery(value, "product", ct: ct);
