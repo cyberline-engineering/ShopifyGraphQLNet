@@ -26,6 +26,7 @@ public class Metafield: INode
     /// The namespace for a metafield.
     /// </summary>
     public string Namespace { get; set; } = default!;
+
     /// <summary>
     /// The parent object that the metafield belongs to.
     /// Possible types:
@@ -41,7 +42,7 @@ public class Metafield: INode
     /// <item>Shop</item>
     /// </list>
     /// </summary>
-    public object ParentResource { get; set; }
+    public object ParentResource { get; set; } = default!;
     /// <summary>
     /// The type name of the metafield. See the list of <see href="https://shopify.dev/apps/metafields/definitions/types">supported types</see>
     /// </summary>
@@ -55,5 +56,18 @@ public class Metafield: INode
     /// </summary>
     public string Value { get; set; } = default!;
 
-    internal dynamic? _arguments { get; set; }
+    internal MetafieldArguments? _arguments { get; set; }
+}
+
+public class MetafieldArguments
+{
+    /// <summary>
+    /// Container for a set of metafields (maximum of 20 characters).
+    /// </summary>
+    public string Namespace { get; set; } = default!;
+
+    /// <summary>
+    /// Identifier for the metafield (maximum of 30 characters).
+    /// </summary>
+    public string Key { get; set; } = default!;
 }

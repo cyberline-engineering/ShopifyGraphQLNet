@@ -25,14 +25,7 @@ namespace ShopifyGraphQLNet
                 .ConfigureHttpClient((provider, client) =>
                 {
                     var options = config.Value;
-                    client.BaseAddress =
-                        new Uri(
-                            $"https://{options.StoreName}.myshopify.com/api/{options.ApiVersion.Value}/graphql.json");
-                    if (!String.IsNullOrWhiteSpace(options.StorefrontApiAccessToken))
-                    {
-                        client.DefaultRequestHeaders.Add("X-Shopify-Storefront-Access-Token",
-                            options.StorefrontApiAccessToken);
-                    }
+                    client.ConfigureShopifyClient(options);
 
                     if (client.DefaultRequestHeaders.UserAgent.Count == 0)
                     {
@@ -55,6 +48,22 @@ namespace ShopifyGraphQLNet
             }
 
             return services;
+        }
+
+        public static void ConfigureShopifyClient(this HttpClient client, ShopifyGraphQLNetClientConfig options)
+        {
+            if (!String.IsNullOrWhiteSpace(options.StoreName))
+            {
+                client.BaseAddress =
+                    new Uri(
+                        $"https://{options.StoreName}.myshopify.com/api/{options.ApiVersion.Value}/graphql.json");
+            }
+
+            if (!String.IsNullOrWhiteSpace(options.StorefrontApiAccessToken))
+            {
+                client.DefaultRequestHeaders.Add("X-Shopify-Storefront-Access-Token",
+                    options.StorefrontApiAccessToken);
+            }
         }
     }
 }

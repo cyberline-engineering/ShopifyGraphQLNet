@@ -1,6 +1,7 @@
 ﻿using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.Types.Interface;
 using ShopifyGraphQLNet.Types.Product.Arguments;
+using ShopifyGraphQLNet.Types.SellingPlan;
 
 namespace ShopifyGraphQLNet.Types.Product
 {
@@ -101,25 +102,25 @@ namespace ShopifyGraphQLNet.Types.Product
         /// </summary>
         public string Vendor { get; set; } = default!;
 
-        ///// <summary>
-        ///// List of collections a product belongs to.
-        ///// </summary>
-        //public Connection<Collection> Collections { get; set; } = default!;
-        ///// <summary>
-        ///// List of images associated with the product.
-        ///// </summary>
-        //public Connection<Image> Images { get; set; } = default!;
+        /// <summary>
+        /// List of collections a product belongs to.
+        /// </summary>
+        public CollectionConnection Collections { get; set; } = default!;
+        /// <summary>
+        /// List of images associated with the product.
+        /// </summary>
+        public ImageConnection Images { get; set; } = default!;
         ///// <summary>
         ///// The media associated with the product.
         ///// </summary>
         //public Connection<IMedia> Media { get; set; } = default!;
-        ///// <summary>
-        ///// A list of a product's available selling plan groups.
-        ///// A selling plan group represents a selling method.
-        ///// For example, 'Subscribe and save' is a selling method where customers pay for goods or services per delivery.
-        ///// A selling plan group contains individual selling plans.
-        ///// </summary>
-        //public Connection<SellingPlanGroup> SellingPlanGroups { get; set; } = default!;
+        /// <summary>
+        /// A list of a product's available selling plan groups.
+        /// A selling plan group represents a selling method.
+        /// For example, 'Subscribe and save' is a selling method where customers pay for goods or services per delivery.
+        /// A selling plan group contains individual selling plans.
+        /// </summary>
+        public SellingPlanGroupConnection SellingPlanGroups { get; set; } = default!;
         /// <summary>
         /// List of the product’s variants.
         /// </summary>
@@ -133,7 +134,12 @@ namespace ShopifyGraphQLNet.Types.Product
         {
             return new()
             {
-                Variants = ProductVariantConnection.Default, Description = String.Empty, DescriptionHtml = String.Empty,
+                Variants = ProductVariantConnection.Default, 
+                Collections = CollectionConnection.Default, 
+                Images = ImageConnection.Default, 
+                //SellingPlanGroups = SellingPlanGroupConnection.Default, 
+                
+                Description = String.Empty, DescriptionHtml = String.Empty,
                 FeaturedImage = Image.Default, Id = String.Empty, Handle = String.Empty,
                 Options = Array.Empty<ProductOption>(), Title = String.Empty, ProductType = String.Empty,
                 Tags = Array.Empty<string>(), TotalInventory = 0, Vendor = String.Empty,
@@ -143,9 +149,27 @@ namespace ShopifyGraphQLNet.Types.Product
         }
     }
 
+    public class SellingPlanGroupConnection: Connection<SellingPlanGroup>
+    {
+        internal static readonly SellingPlanGroupConnection Default = new()
+            { _arguments = ConnectionArguments.Default, Nodes = new[] { SellingPlanGroup.Default } };
+    }
+
+    public class ImageConnection: Connection<Image>
+    {
+        internal static readonly ImageConnection Default = new()
+            { _arguments = ConnectionArguments.Default, Nodes = new[] { Image.Default } };
+    }
+
+    public class CollectionConnection: Connection<Collection>
+    {
+        internal static readonly CollectionConnection Default = new()
+            { _arguments = ConnectionArguments.Default, Nodes = new[] { Collection.Default } };
+    }
+
     public class ProductVariantConnection : Connection<ProductVariant>
     {
         internal static readonly ProductVariantConnection Default = new()
-            { _arguments = ConnectionArguments.Default, Nodes = Array.Empty<ProductVariant>() };
+            { _arguments = ConnectionArguments.Default, Nodes = new[] { ProductVariant.Default } };
     }
 }

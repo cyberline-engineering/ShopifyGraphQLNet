@@ -18,10 +18,11 @@ public class SuccessfulFulfillment
     /// The name of the tracking company.
     /// </summary>
     public string? TrackingCompany { get; set; }
+
     /// <summary>
     /// Tracking information associated with the fulfillment, such as the tracking number and tracking URL.
     /// </summary>
-    public FulfillmentTrackingInfos TrackingInfo { get; set; }
+    public FulfillmentTrackingInfos TrackingInfo { get; set; } = default!;
 }
 
 public class FulfillmentTrackingInfos: List<FulfillmentTrackingInfo>

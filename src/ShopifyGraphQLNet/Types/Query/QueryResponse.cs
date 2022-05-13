@@ -21,7 +21,7 @@ namespace ShopifyGraphQLNet.Types.Query
         /// Provides more information about the error(s) including properties and metadata.
         /// </summary>
         public ErrorExtensions? Extensions { get; set; }
-        public Location[]? Locations { get; set; }
+        public ErrorLocation[]? Locations { get; set; }
     }
 
     public class ErrorExtensions
@@ -29,7 +29,7 @@ namespace ShopifyGraphQLNet.Types.Query
         /// <summary>
         /// Shows error codes common to Shopify. Additional error codes may also be shown.
         /// </summary>
-        public string Code { get; set; }
+        public string Code { get; set; } = default!;
         public string? ArgumentName { get; set; }
         public string? ErrorMessage { get; set; }
         public string? TypeName { get; set; }
@@ -58,7 +58,7 @@ namespace ShopifyGraphQLNet.Types.Query
     //    INTERNAL_SERVER_ERROR
     //}
 
-    public class Location
+    public class ErrorLocation
     {
         public long Line { get; set; }
         public long Column { get; set; }

@@ -8,14 +8,16 @@ namespace ShopifyGraphQLNet
 {
     public class ShopifyGraphQLNetClient
     {
-        private readonly HttpClient client;
+        private readonly HttpClient httpClient;
         private readonly ILogger<ShopifyGraphQLNetClient> logger;
         private readonly JsonSerializerOptions serializerOptions;
 
-        public ShopifyGraphQLNetClient(HttpClient client, JsonSerializerOptions serializerOptions,
+        public HttpClient HttpClient => httpClient;
+
+        public ShopifyGraphQLNetClient(HttpClient httpClient, JsonSerializerOptions serializerOptions,
             ILogger<ShopifyGraphQLNetClient> logger)
         {
-            this.client = client;
+            this.httpClient = httpClient;
             this.serializerOptions = serializerOptions;
             this.logger = logger;
         }
@@ -31,7 +33,7 @@ namespace ShopifyGraphQLNet
                 Content = JsonContent.Create(new { query = $"query {query}", variables, operationName }, options: serializerOptions)
             };
 
-            using var response = await client.SendAsync(request, ct).ConfigureAwait(false);
+            using var response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -54,7 +56,7 @@ namespace ShopifyGraphQLNet
                 Content = JsonContent.Create(new { query = $"mutation {mutation}", variables, operationName }, options: serializerOptions)
             };
 
-            using var response = await client.SendAsync(request, ct).ConfigureAwait(false);
+            using var response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {

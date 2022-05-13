@@ -5,7 +5,7 @@ using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi
 {
-    public interface ICheckoutService
+    public interface ICheckoutService: IShopifyService
     {
         /// <summary>
         /// Creates a new checkout.

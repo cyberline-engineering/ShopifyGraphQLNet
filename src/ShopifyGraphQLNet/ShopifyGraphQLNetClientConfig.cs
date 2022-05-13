@@ -7,11 +7,8 @@ namespace ShopifyGraphQLNet
 {
     public class ShopifyGraphQLNetClientConfig: IOptions<ShopifyGraphQLNetClientConfig>
     {
-        [Required(ErrorMessage = "Not defined StoreName. Please provide correct StoreName at appsettings.json")]
         public string StoreName { get; set; } = default!;
-
         public string StorefrontApiAccessToken { get; set; } = default!;
-        
         public string AdminApiAccessToken { get; set; } = default!;
 
         [Required(ErrorMessage = "Not defined ApiVersion. Please provide correct ApiVersion at appsettings.json")]

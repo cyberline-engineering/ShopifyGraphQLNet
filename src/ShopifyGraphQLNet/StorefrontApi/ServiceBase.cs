@@ -1,16 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
-using ShopifyGraphQLNet.StorefrontApi.V202204;
 
 namespace ShopifyGraphQLNet.StorefrontApi;
 
-public abstract class ServiceBase
+public abstract class ServiceBase: IShopifyService
 {
     protected ShopifyGraphQLNetClient client;
-    protected ILogger<ProductService> logger;
+    protected ILogger logger;
 
-    protected ServiceBase(ShopifyGraphQLNetClient client, ILogger<ProductService> logger)
+    protected ServiceBase(ShopifyGraphQLNetClient client, ILogger logger)
     {
         this.client = client;
         this.logger = logger;
+    }
+
+    public void ConfigureShopifyClient(ShopifyGraphQLNetClientConfig config)
+    {
+        client.HttpClient.ConfigureShopifyClient(config);
     }
 }

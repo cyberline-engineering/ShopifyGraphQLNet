@@ -4,7 +4,7 @@ using ShopifyGraphQLNet.Types.Query;
 
 namespace ShopifyGraphQLNet.StorefrontApi;
 
-public interface IProductService
+public interface IProductService: IShopifyService
 {
     /// <summary>
     /// List of the shop’s products.
