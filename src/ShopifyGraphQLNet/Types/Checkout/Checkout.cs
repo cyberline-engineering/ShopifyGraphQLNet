@@ -139,6 +139,11 @@ public class Checkout: INode
         ShippingAddress = MailingAddress.Default,
         ShippingLine = ShippingRate.Default,
         Email = String.Empty,
+        TotalPriceV2 = MoneyV2.Default,
+        TotalTaxV2 = MoneyV2.Default,
+        SubtotalPriceV2 = MoneyV2.Default,
+        LineItemsSubtotalPrice = MoneyV2.Default,
+        PaymentDueV2 = MoneyV2.Default,
     };
 }
 

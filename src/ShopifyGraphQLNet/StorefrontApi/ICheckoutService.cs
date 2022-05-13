@@ -64,5 +64,17 @@ namespace ShopifyGraphQLNet.StorefrontApi
         Task<QueryResult<CheckoutLineItemsReplacePayload>> LineItemsReplace(
             CheckoutLineItemsReplaceArguments arguments, CheckoutLineItemsReplacePayload? value = default,
             CancellationToken ct = default);
+
+        /// <summary>
+        /// Updates the shipping lines on an existing checkout.
+        /// Requires unauthenticated_write_checkouts access scope.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="value"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        Task<QueryResult<CheckoutShippingLineUpdatePayload>> ShippingLineUpdate(
+            CheckoutShippingLineUpdateArguments arguments, CheckoutShippingLineUpdatePayload? value = default,
+            CancellationToken ct = default);
     }
 }

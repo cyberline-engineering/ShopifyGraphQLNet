@@ -67,5 +67,17 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
             return client.ExecuteMutation(value ?? CheckoutLineItemsReplacePayload.Default, arguments,
                 "checkoutLineItemsReplace", ct: ct);
         }
+
+        /// <inheritdoc />
+        public Task<QueryResult<CheckoutShippingLineUpdatePayload>> ShippingLineUpdate(
+            CheckoutShippingLineUpdateArguments arguments, CheckoutShippingLineUpdatePayload? value = default,
+            CancellationToken ct = default)
+        {
+            logger.LogTrace("ShippingLineUpdate. CheckoutShippingLineUpdateArguments: {@checkoutShippingLineUpdateArguments}",
+                arguments);
+
+            return client.ExecuteMutation(value ?? CheckoutShippingLineUpdatePayload.Default, arguments,
+                "checkoutShippingLineUpdate", ct: ct);
+        }
     }
 }
