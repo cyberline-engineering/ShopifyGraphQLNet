@@ -8,6 +8,11 @@
 	  <EmbedAllSources>true</EmbedAllSources>
 	  <IncludeSymbols>true</IncludeSymbols>
 	  <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	  <Authors>Cyberline Engineering, Denis Porotikov</Authors>
+	  <Copyright>Cyberline Engineering</Copyright>
+	  <Description>.net client for Shopify GraphQL API</Description>
+	  <RepositoryType>git</RepositoryType>
+	  <RepositoryUrl>https://github.com/cmgt/ShopifyGraphQLNet</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
