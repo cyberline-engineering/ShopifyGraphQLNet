@@ -12,7 +12,7 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         { }
 
         /// <inheritdoc />
-        public Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, ProductConnection? value = default, CancellationToken ct = default)
+        public Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, ProductConnection? value = default, RequestOptions? options = default, CancellationToken ct = default)
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
@@ -22,18 +22,18 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
             };
             value._arguments = arguments;
 
-            return client.ExecuteQuery(value, "products", ct: ct);
+            return client.ExecuteQuery(value, "products", options: options, ct: ct);
         }
 
         /// <inheritdoc />
-        public Task<QueryResult<Product>> Get(ProductGetArguments arguments, Product? value = default, CancellationToken ct = default)
+        public Task<QueryResult<Product>> Get(ProductGetArguments arguments, Product? value = default, RequestOptions? options = default, CancellationToken ct = default)
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
             value ??= Product.CreateDefault();
             value._arguments = arguments;
 
-            return client.ExecuteQuery(value, "product", ct: ct);
+            return client.ExecuteQuery(value, "product", options: options, ct: ct);
         }
     }
 }

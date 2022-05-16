@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ShopifyGraphQLNet.Helper;
 using ShopifyGraphQLNet.StorefrontApi;
 
 namespace ShopifyGraphQLNet
@@ -54,14 +55,12 @@ namespace ShopifyGraphQLNet
         {
             if (!String.IsNullOrWhiteSpace(options.StoreName))
             {
-                client.BaseAddress =
-                    new Uri(
-                        $"https://{options.StoreName}.myshopify.com/api/{options.ApiVersion.Value}/graphql.json");
+                client.BaseAddress = options.BuildApiUrl();
             }
 
             if (!String.IsNullOrWhiteSpace(options.StorefrontApiAccessToken))
             {
-                client.DefaultRequestHeaders.Add("X-Shopify-Storefront-Access-Token",
+                client.DefaultRequestHeaders.Add(ShopifyApiHelper.StorefrontAccessTokenHeaderName,
                     options.StorefrontApiAccessToken);
             }
         }

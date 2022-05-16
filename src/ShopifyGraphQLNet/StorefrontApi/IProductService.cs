@@ -11,16 +11,19 @@ public interface IProductService: IShopifyService
     /// </summary>
     /// <param name="arguments"></param>
     /// <param name="value"></param>
+    /// <param name="options"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, ProductConnection? value = default, CancellationToken ct = default);
+    Task<QueryResult<ProductConnection>> List(ProductListArguments arguments, ProductConnection? value = default,
+        RequestOptions? options = default, CancellationToken ct = default);
 
     /// <summary>
     /// Fetch a specific Product by one of its unique attributes.
     /// </summary>
     /// <param name="arguments"></param>
     /// <param name="value"></param>
+    /// <param name="options"></param>
     /// <param name="ct"></param>
     /// <returns></returns>
-    Task<QueryResult<Product>> Get(ProductGetArguments arguments, Product? value = default, CancellationToken ct = default);
+    Task<QueryResult<Product>> Get(ProductGetArguments arguments, Product? value = default, RequestOptions? options = default, CancellationToken ct = default);
 }

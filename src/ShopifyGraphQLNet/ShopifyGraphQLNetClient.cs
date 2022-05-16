@@ -22,16 +22,19 @@ namespace ShopifyGraphQLNet
             this.logger = logger;
         }
 
-        public async Task<QueryResult<T>> ExecuteQuery<T>(T value, string operationName, string? query = default, CancellationToken ct = default)
+        public async Task<QueryResult<T>> ExecuteQuery<T>(T value, string operationName, string? query = default,
+            RequestOptions? options = default, CancellationToken ct = default)
         {
             var variables = QueryBuilder.GetArguments(value);
             query ??= QueryBuilder.Build(value, operationName, variables);
 
             using var request = new HttpRequestMessage()
-            {
-                Method = HttpMethod.Post,
-                Content = JsonContent.Create(new { query = $"query {query}", variables, operationName }, options: serializerOptions)
-            };
+                {
+                    Method = HttpMethod.Post,
+                    Content = JsonContent.Create(new { query = $"query {query}", variables, operationName },
+                        options: serializerOptions)
+                }
+                .PrepareRequest(options);
 
             using var response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
 
@@ -46,15 +49,18 @@ namespace ShopifyGraphQLNet
             return result;
         }
 
-        public async Task<QueryResult<T>> ExecuteMutation<T>(T value, object variables, string operationName, string? mutation = default, CancellationToken ct = default)
+        public async Task<QueryResult<T>> ExecuteMutation<T>(T value, object variables, string operationName,
+            string? mutation = default, RequestOptions? options = default, CancellationToken ct = default)
         {
             mutation ??= QueryBuilder.Build(value, operationName, variables);
 
             using var request = new HttpRequestMessage()
-            {
-                Method = HttpMethod.Post,
-                Content = JsonContent.Create(new { query = $"mutation {mutation}", variables, operationName }, options: serializerOptions)
-            };
+                {
+                    Method = HttpMethod.Post,
+                    Content = JsonContent.Create(new { query = $"mutation {mutation}", variables, operationName },
+                        options: serializerOptions)
+                }
+                .PrepareRequest(options);
 
             using var response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
 

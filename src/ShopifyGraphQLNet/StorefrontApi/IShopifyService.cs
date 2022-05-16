@@ -2,5 +2,5 @@
 
 public interface IShopifyService
 {
-    void ConfigureShopifyClient(ShopifyGraphQLNetClientConfig config);
+    ShopifyGraphQLNetClient Client { get; }
 }
