@@ -12,9 +12,9 @@
         {
             if (options == default) return request;
 
-            if (!String.IsNullOrWhiteSpace(options.Url))
+            if (options.Url != default)
             {
-                request.RequestUri = new Uri(options.Url);
+                request.RequestUri = options.Url;
             }
 
             if (options.Headers?.Length > 0)

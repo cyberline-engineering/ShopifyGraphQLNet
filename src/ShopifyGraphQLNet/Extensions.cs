@@ -25,8 +25,7 @@ namespace ShopifyGraphQLNet
                 .AddHttpClient<ShopifyGraphQLNetClient>()
                 .ConfigureHttpClient((provider, client) =>
                 {
-                    var options = config.Value;
-                    client.ConfigureShopifyClient(options);
+                    client.ConfigureShopifyClient(config);
 
                     if (client.DefaultRequestHeaders.UserAgent.Count == 0)
                     {
@@ -42,7 +41,8 @@ namespace ShopifyGraphQLNet
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             });
 
-            if (config.ApiVersion.Value == ShopifyApiVersionExtensions.V2022_04.Value)
+
+            if (config?.ApiVersion?.Value == default || config.ApiVersion.Value == ShopifyApiVersionExtensions.V2022_04.Value)
             {
                 services.AddTransient<IProductService, StorefrontApi.V202204.ProductService>();
                 services.AddTransient<ICheckoutService, StorefrontApi.V202204.CheckoutService>();
@@ -51,8 +51,10 @@ namespace ShopifyGraphQLNet
             return services;
         }
 
-        public static void ConfigureShopifyClient(this HttpClient client, ShopifyGraphQLNetClientConfig options)
+        public static void ConfigureShopifyClient(this HttpClient client, ShopifyGraphQLNetClientConfig? options)
         {
+            if (options == default) return;
+
             if (!String.IsNullOrWhiteSpace(options.StoreName))
             {
                 client.BaseAddress = options.BuildApiUrl();

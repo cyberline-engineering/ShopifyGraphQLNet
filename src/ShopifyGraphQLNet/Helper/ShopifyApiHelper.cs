@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,12 @@ namespace ShopifyGraphQLNet.Helper
 
         public static Uri BuildApiUrl(this ShopifyGraphQLNetClientConfig config)
         {
+            if (config.StoreName == default)
+                throw new NoNullAllowedException("config.StoreName");
+
+            if (config.ApiVersion?.Value == default)
+                throw new NoNullAllowedException("config.ApiVersion.Value");
+
             return BuildApiUrl(config.StoreName, config.ApiVersion);
         }
     }
