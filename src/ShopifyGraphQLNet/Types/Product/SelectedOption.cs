@@ -15,4 +15,6 @@ public class SelectedOption
     /// The product option’s value.
     /// </summary>
     public string Value { get; set; } = default!;
+
+    public static readonly SelectedOption Default = new() { Name = String.Empty, Value = String.Empty };
 }

@@ -92,7 +92,7 @@ namespace ShopifyGraphQLNet.StorefrontApi
         /// <param name="options"></param>
         /// <param name="ct"></param>
         /// <returns></returns>
-        Task<QueryResult<CheckoutCompleteWithTokenizedPaymentV3Payload>> CheckoutCompleteWithTokenizedPaymentV3(
+        Task<QueryResult<CheckoutCompleteWithTokenizedPaymentV3Payload>> CompleteWithTokenizedPaymentV3(
             CheckoutCompleteWithTokenizedPaymentV3Arguments arguments, CheckoutCompleteWithTokenizedPaymentV3Payload? value = default,
             RequestOptions? options = default, CancellationToken ct = default);
     }

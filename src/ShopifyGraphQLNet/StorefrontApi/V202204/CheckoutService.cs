@@ -85,13 +85,13 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         }
 
         /// <inheritdoc />
-        public Task<QueryResult<CheckoutCompleteWithTokenizedPaymentV3Payload>> CheckoutCompleteWithTokenizedPaymentV3(
+        public Task<QueryResult<CheckoutCompleteWithTokenizedPaymentV3Payload>> CompleteWithTokenizedPaymentV3(
             CheckoutCompleteWithTokenizedPaymentV3Arguments arguments,
             CheckoutCompleteWithTokenizedPaymentV3Payload? value = default,
             RequestOptions? options = default, CancellationToken ct = default)
         {
             logger.LogTrace(
-                "CheckoutCompleteWithTokenizedPaymentV3. CheckoutCompleteWithTokenizedPaymentV3Arguments: {@checkoutCompleteWithTokenizedPaymentV3Arguments}",
+                "CompleteWithTokenizedPaymentV3. CheckoutCompleteWithTokenizedPaymentV3Arguments: {@checkoutCompleteWithTokenizedPaymentV3Arguments}",
                 arguments);
 
             return client.ExecuteMutation(value ?? CheckoutCompleteWithTokenizedPaymentV3Payload.Default, arguments,

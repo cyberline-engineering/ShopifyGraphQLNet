@@ -35,4 +35,10 @@ public class CheckoutLineItem: INode
     /// Product variant of the line item.
     /// </summary>
     public ProductVariant? Variant { get; set; }
+
+    public static readonly CheckoutLineItem Default = new()
+    {
+        Id = String.Empty, Title = String.Empty, Quantity = default, Variant = ProductVariant.Default,
+        UnitPrice = MoneyV2.Default
+    };
 }

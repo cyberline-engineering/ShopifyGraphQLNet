@@ -11,7 +11,7 @@ namespace ShopifyGraphQLNet
 {
     public static class Extensions
     {
-        public static IServiceCollection AddShopifyGraphQLNetClient(this IServiceCollection services,
+        public static IHttpClientBuilder AddShopifyGraphQLNetClient(this IServiceCollection services,
             IConfiguration configuration)
         {
             var section = configuration.GetSection(nameof(ShopifyGraphQLNetClientConfig));
@@ -20,20 +20,6 @@ namespace ShopifyGraphQLNet
                 .ValidateDataAnnotations();
 
             var config = section.Get<ShopifyGraphQLNetClientConfig>();
-
-            services
-                .AddHttpClient<ShopifyGraphQLNetClient>()
-                .ConfigureHttpClient((provider, client) =>
-                {
-                    client.ConfigureShopifyClient(config);
-
-                    if (client.DefaultRequestHeaders.UserAgent.Count == 0)
-                    {
-                        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
-                            nameof(ShopifyGraphQLNetClient),
-                            Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)));
-                    }
-                });
 
             services.AddSingleton(_ => new JsonSerializerOptions(JsonSerializerDefaults.Web)
             {
@@ -48,7 +34,21 @@ namespace ShopifyGraphQLNet
                 services.AddTransient<ICheckoutService, StorefrontApi.V202204.CheckoutService>();
             }
 
-            return services;
+            var httpClientBuilder = services
+                .AddHttpClient<ShopifyGraphQLNetClient>()
+                .ConfigureHttpClient((provider, client) =>
+                {
+                    client.ConfigureShopifyClient(config);
+
+                    if (client.DefaultRequestHeaders.UserAgent.Count == 0)
+                    {
+                        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
+                            nameof(ShopifyGraphQLNetClient),
+                            Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)));
+                    }
+                });
+
+            return httpClientBuilder;
         }
 
         public static void ConfigureShopifyClient(this HttpClient client, ShopifyGraphQLNetClientConfig? options)

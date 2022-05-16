@@ -14,6 +14,6 @@ public class AvailableShippingRates
     /// </summary>
     public ShippingRate[]? ShippingRates { get; set; }
 
-    public static readonly AvailableShippingRates Default = new ()
-        { ShippingRates = Array.Empty<ShippingRate>() };
+    public static readonly AvailableShippingRates Default = new()
+        { ShippingRates = new[] { ShippingRate.Default } };
 }

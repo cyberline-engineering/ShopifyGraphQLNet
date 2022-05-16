@@ -151,5 +151,5 @@ public class Checkout: INode
 public class CheckoutLineItemConnection : Connection<CheckoutLineItem>
 {
     public static readonly CheckoutLineItemConnection Default = new()
-        { Nodes = Array.Empty<CheckoutLineItem>(), _arguments = ConnectionArguments.Default };
+        { Nodes = new[] { CheckoutLineItem.Default }, _arguments = ConnectionArguments.Default };
 }

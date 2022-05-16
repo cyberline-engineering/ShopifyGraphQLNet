@@ -19,10 +19,10 @@ namespace ShopifyGraphQLNet.Helper
 
         public static Uri BuildApiUrl(this ShopifyGraphQLNetClientConfig config)
         {
-            if (config.StoreName == default)
+            if (String.IsNullOrWhiteSpace(config.StoreName))
                 throw new NoNullAllowedException("config.StoreName");
 
-            if (config.ApiVersion?.Value == default)
+            if (String.IsNullOrWhiteSpace(config.ApiVersion?.Value))
                 throw new NoNullAllowedException("config.ApiVersion.Value");
 
             return BuildApiUrl(config.StoreName, config.ApiVersion);

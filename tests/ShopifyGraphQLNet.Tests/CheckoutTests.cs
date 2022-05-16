@@ -245,7 +245,7 @@ namespace ShopifyGraphQLNet.Tests
                 Payment = payment
             };
 
-            var result = await checkoutService.CheckoutCompleteWithTokenizedPaymentV3(arguments);
+            var result = await checkoutService.CompleteWithTokenizedPaymentV3(arguments);
             result.Assert();
 
             var pm = result.Payload!.Payment;

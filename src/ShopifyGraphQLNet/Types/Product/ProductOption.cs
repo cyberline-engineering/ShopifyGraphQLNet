@@ -17,4 +17,7 @@ public class ProductOption: INode
     /// The corresponding value to the product option name.
     /// </summary>
     public string[] Values { get; set; } = default!;
+
+    public static readonly ProductOption Default = new()
+        { Id = String.Empty, Name = String.Empty, Values = Array.Empty<string>() };
 }

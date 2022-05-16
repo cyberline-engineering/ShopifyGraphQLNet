@@ -71,8 +71,10 @@ namespace ShopifyGraphQLNet.Helper
             return argItems;
         }
 
-        private static void BuildType(object? value, Type type, QueryBuildOptions options, StringBuilder builder, ref int level)
+        private static void BuildType(object value, Type type, QueryBuildOptions options, StringBuilder builder, ref int level, string? levelType = default)
         {
+            levelType = $"{levelType} -> {type.Name}";
+
             var properties = type.GetProperties()
                 .Where(x => !x.Name.Equals(ArgumentsPropertyName) && (value == default || x.GetValue(value) != null))
 #if DEBUG
@@ -118,6 +120,11 @@ namespace ShopifyGraphQLNet.Helper
                     }
                 }
 
+                if (pv == null)
+                {
+                    continue;
+                }
+
                 var arguments = GetArgumentValues(GetArguments(propertyValue), options).ToArray();
 
                 if (arguments.Length > 0)
@@ -127,7 +134,7 @@ namespace ShopifyGraphQLNet.Helper
                 }
 
                 AppendValue(builder, $"{propertyName} {{", options.PrettyPrint, level++);
-                BuildType(pv, pt, options, builder, ref level);
+                BuildType(pv, pt, options, builder, ref level, levelType);
                 level--;
                 AppendValue(builder, "}", options.PrettyPrint, level);
             }

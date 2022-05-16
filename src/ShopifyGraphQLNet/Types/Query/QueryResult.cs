@@ -5,16 +5,20 @@ using System.Text.Json;
 
 namespace ShopifyGraphQLNet.Types.Query
 {
-    public class QueryResult<T>
+    public class QueryResult
     {
         public bool Result { get; set; }
         public int StatusCode { get; set; }
-        public T? Payload { get; set; }
 
         /// <summary>
         /// A list of all errors returned.
         /// </summary>
         public Error[]? Errors { get; set; }
+    }
+
+    public class QueryResult<T> : QueryResult
+    {
+        public T? Payload { get; set; }
 
         public static implicit operator T?(QueryResult<T> source)
         {
@@ -29,7 +33,6 @@ namespace ShopifyGraphQLNet.Types.Query
 
     internal static class QueryResultExtensions
     {
-
         public static async Task<QueryResult<T>> ToResult<T>(this HttpResponseMessage response, string root,
             JsonSerializerOptions serializerOptions, CancellationToken ct = default)
         {
