@@ -32,6 +32,7 @@ namespace ShopifyGraphQLNet
             {
                 services.AddTransient<IProductService, StorefrontApi.V202204.ProductService>();
                 services.AddTransient<ICheckoutService, StorefrontApi.V202204.CheckoutService>();
+                services.AddTransient<IOnlineStoreService, StorefrontApi.V202204.OnlineStoreService>();
             }
 
             var httpClientBuilder = services
