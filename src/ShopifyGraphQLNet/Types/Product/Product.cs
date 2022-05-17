@@ -147,29 +147,22 @@ namespace ShopifyGraphQLNet.Types.Product
         /// </summary>
         public ProductVariantConnection Variants { get; set; } = default!;
 
-        internal ProductGetArguments? _arguments { get; set; }
-
-        public static readonly Product Default = CreateDefault();
-
-        internal static Product CreateDefault()
+        public static readonly Product Default = new()
         {
-            return new()
-            {
-                Variants = ProductVariantConnection.Default,
-                Collections = CollectionConnection.Default,
-                Images = ImageConnection.Default,
-                //SellingPlanGroups = SellingPlanGroupConnection.Default, 
+            Variants = ProductVariantConnection.Default,
+            Collections = CollectionConnection.Default,
+            Images = ImageConnection.Default,
+            //SellingPlanGroups = SellingPlanGroupConnection.Default, 
 
-                Description = String.Empty, DescriptionHtml = String.Empty,
-                FeaturedImage = Image.Default, Id = String.Empty, Handle = String.Empty,
-                Options = new[] { ProductOption.Default },
-                Title = String.Empty, ProductType = String.Empty,
-                Tags = Array.Empty<string>(),
-                TotalInventory = 0, Vendor = String.Empty,
-                CompareAtPriceRange = ProductPriceRange.Default, OnlineStoreUrl = TypeHelper.DefaultUrl,
-                PriceRange = ProductPriceRange.Default, Seo = Seo.Default
-            };
-        }
+            Description = String.Empty, DescriptionHtml = String.Empty,
+            FeaturedImage = Image.Default, Id = String.Empty, Handle = String.Empty,
+            Options = new[] { ProductOption.Default },
+            Title = String.Empty, ProductType = String.Empty,
+            Tags = Array.Empty<string>(),
+            TotalInventory = 0, Vendor = String.Empty,
+            CompareAtPriceRange = ProductPriceRange.Default, OnlineStoreUrl = TypeHelper.DefaultUrl,
+            PriceRange = ProductPriceRange.Default, Seo = Seo.Default
+        };
     }
 
     public class SellingPlanGroupConnection: Connection<SellingPlanGroup>

@@ -16,13 +16,9 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            value ??= new ProductConnection
-            {
-                Nodes = new[] { Product.Default }
-            };
-            value._arguments = arguments;
+            value ??= ProductConnection.Default;
 
-            return client.ExecuteQuery(value, "products", options: options, ct: ct);
+            return client.ExecuteQuery(value, arguments, "products", options: options, ct: ct);
         }
 
         /// <inheritdoc />
@@ -30,10 +26,9 @@ namespace ShopifyGraphQLNet.StorefrontApi.V202204
         {
             logger.LogTrace("List. ProductListArguments: {@productConnectionArguments}", arguments);
 
-            value ??= Product.CreateDefault();
-            value._arguments = arguments;
+            value ??= Product.Default;
 
-            return client.ExecuteQuery(value, "product", options: options, ct: ct);
-        }
+            return client.ExecuteQuery(value, arguments, "product", options: options, ct: ct);
+        } 
     }
 }
