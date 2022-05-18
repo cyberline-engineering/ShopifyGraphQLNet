@@ -1,5 +1,5 @@
 
-# ShopifyGraphQLNet: .NET client for SHopify GraphQL API.
+# ShopifyGraphQLNet: .NET client for Shopify GraphQL API.
 
 https://shopify.dev/api/storefront
 
