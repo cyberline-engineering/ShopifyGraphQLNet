@@ -173,19 +173,19 @@ namespace ShopifyGraphQLNet.Types.Product
 
     public class ImageConnection: Connection<Image>
     {
-        internal static readonly ImageConnection Default = new()
+        public static readonly ImageConnection Default = new()
             { _arguments = ConnectionArguments.Default, Nodes = new[] { Image.Default } };
     }
 
     public class CollectionConnection: Connection<Collection>
     {
-        internal static readonly CollectionConnection Default = new()
+        public static readonly CollectionConnection Default = new()
             { _arguments = ConnectionArguments.Default, Nodes = new[] { Collection.Default } };
     }
 
     public class ProductVariantConnection : Connection<ProductVariant>
     {
-        internal static readonly ProductVariantConnection Default = new()
+        public static readonly ProductVariantConnection Default = new()
             { _arguments = ConnectionArguments.Default, Nodes = new[] { ProductVariant.Default } };
     }
 }

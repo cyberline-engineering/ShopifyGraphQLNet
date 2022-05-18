@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +44,16 @@ namespace ShopifyGraphQLNet.Tests
             productService = host.Services.GetRequiredService<IProductService>();
         }
 
+        public static IEnumerable<object[]> TestIdData()
+        {
+            yield return new object[] { "gid://shopify/Product/7712881869037", "test-product" };
+        }
+
+        public static IEnumerable<object[]> TestIdsData()
+        {
+            yield return new object[] { new[] { "gid://shopify/Product/7712881869037" } };
+        }
+
         [Fact]
         public void ProductQueryBuilderTest()
         {
@@ -67,11 +80,56 @@ namespace ShopifyGraphQLNet.Tests
         }
 
         [Theory]
-        [InlineData("gid://shopify/Product/7712881869037")]
-        [InlineData(null, "test-product")]
-        public async Task GetProductTest(string? id = default, string? handle = default)
+        [MemberData(nameof(TestIdData))]
+        public async Task GetProductTest(string id, string handle)
         {
-            var res = await productService.Get(new ProductGetArguments() { Id = id, Handle = handle});
+            var arguments = Random.Shared.NextSingle() < 0.5f
+                ? new ProductGetArguments{ Id = id }
+                : new ProductGetArguments{ Handle = handle };
+
+            var res = await productService.Get(arguments);
+            
+            res.Assert();
+        }
+
+        [Theory]
+        [MemberData(nameof(TestIdData))]
+        public async Task GetNodeTest(string id, string _)
+        {
+            var res = await productService.GetNode(id, Product.Default);
+            
+            res.Assert();
+        }
+
+        [Theory]
+        [MemberData(nameof(TestIdData))]
+        public async Task GetPartialNodeTest(string id, string _)
+        {
+            var res = await productService.GetNode(id,
+                new { id = String.Empty, title = String.Empty, images = ImageConnection.Default }, "Product");
+            
+            res.Assert();
+        }
+
+        [Theory]
+        [MemberData(nameof(TestIdData))]
+        public async Task GetPartialNode2Test(string id, string _)
+        {
+            var res = await productService.GetNode(id,
+                new
+                {
+                    id = String.Empty, title = String.Empty,
+                    images = new { nodes = new[] { Image.Default }, _arguments = new { first = 2 } }
+                }, "Product");
+
+            res.Assert();
+        }
+
+        [Theory]
+        [MemberData(nameof(TestIdsData))]
+        public async Task GetNodesTest(string[] ids)
+        {
+            var res = await productService.GetNodes(ids, Product.Default);
             
             res.Assert();
         }

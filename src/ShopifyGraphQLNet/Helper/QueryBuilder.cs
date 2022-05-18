@@ -49,7 +49,7 @@ namespace ShopifyGraphQLNet.Helper
             AppendValue(builder, $"{operationName} {{", options.PrettyPrint, level++);
             AppendValue(builder, $"{root} {{", options.PrettyPrint, level++);
 
-            BuildType(value, value.GetType(), options, builder, ref level);
+            BuildType(value, options, builder, ref level);
 
             AppendValue(builder, "}", options.PrettyPrint, --level);
             AppendValue(builder, "}", options.PrettyPrint, --level);
@@ -71,12 +71,15 @@ namespace ShopifyGraphQLNet.Helper
             return argItems;
         }
 
-        private static void BuildType(object value, Type type, QueryBuildOptions options, StringBuilder builder, ref int level, string? levelType = default)
+        public static void BuildType<T>(T value, QueryBuildOptions options, StringBuilder builder, ref int level, string? levelType = default)
         {
+            var type = value!.GetType();
+#if DEBUG
             levelType = $"{levelType} -> {type.Name}";
+#endif
 
             var properties = type.GetProperties()
-                .Where(x => !x.Name.Equals(ArgumentsPropertyName) && (value == default || x.GetValue(value) != null))
+                .Where(x => !x.Name.Equals(ArgumentsPropertyName) && x.GetValue(value) != null)
 #if DEBUG
                 .ToArray()
 #endif
@@ -94,17 +97,11 @@ namespace ShopifyGraphQLNet.Helper
                     continue;
                 }
 
-                var propertyValue = value != default
+                var propertyValue = value != null
                     ? property.GetValue(value)!
-                    : default;
+                    : null;
 
-                var pt = propertyType;
                 var pv = propertyValue;
-
-                if (propertyType.IsArray)
-                {
-                    pt = propertyType.GetElementType()!;
-                }
 
                 if (value != null)
                 {
@@ -134,7 +131,7 @@ namespace ShopifyGraphQLNet.Helper
                 }
 
                 AppendValue(builder, $"{propertyName} {{", options.PrettyPrint, level++);
-                BuildType(pv, pt, options, builder, ref level, levelType);
+                BuildType(pv, options, builder, ref level, levelType);
                 level--;
                 AppendValue(builder, "}", options.PrettyPrint, level);
             }
@@ -193,7 +190,7 @@ namespace ShopifyGraphQLNet.Helper
             return notNull ? $"{typeName}!" : typeName;
         }
 
-        private static void AppendValue(this StringBuilder builder, string value, bool prettyPrint, int level)
+        internal static void AppendValue(this StringBuilder builder, string value, bool prettyPrint, int level)
         {
             if (prettyPrint)
                 builder.AppendLine(value.PadLeft(value.Length + level * 2, ' '));
