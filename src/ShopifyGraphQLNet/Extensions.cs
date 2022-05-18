@@ -15,9 +15,7 @@ namespace ShopifyGraphQLNet
             IConfiguration configuration)
         {
             var section = configuration.GetSection(nameof(ShopifyGraphQLNetClientConfig));
-            services.AddOptions<ShopifyGraphQLNetClientConfig>()
-                .Bind(section)
-                .ValidateDataAnnotations();
+            services.AddOptions<ShopifyGraphQLNetClientConfig>();
 
             var config = section.Get<ShopifyGraphQLNetClientConfig>();
 
