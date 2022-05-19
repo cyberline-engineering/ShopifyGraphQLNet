@@ -28,7 +28,7 @@ public abstract class ServiceBase: IShopifyService
         var level = 0;
         var queryOptions = QueryBuildOptions.Default;
 
-        sb.AppendValue("query getNode($id: ID!) {", queryOptions.PrettyPrint, level++);
+        sb.AppendValue("query node($id: ID!) {", queryOptions.PrettyPrint, level++);
         sb.AppendValue("node(id: $id)", queryOptions.PrettyPrint, level++);
         sb.AppendValue($"{{... on {fragment ?? typeof(T).Name} {{", queryOptions.PrettyPrint, level++);
         QueryBuilder.BuildType(value, queryOptions, sb, ref level);
@@ -40,7 +40,7 @@ public abstract class ServiceBase: IShopifyService
 
         logger.LogTrace("Query: {query}", query);
 
-        return client.ExecuteQuery(value, new { id }, "getNode", query, options: options, ct: ct);
+        return client.ExecuteQuery(value, new { id }, "node", query, options: options, ct: ct);
     }
 
     /// <inheritdoc />
@@ -53,7 +53,7 @@ public abstract class ServiceBase: IShopifyService
         var level = 0;
         var queryOptions = QueryBuildOptions.Default;
 
-        sb.AppendValue("query getNodes($ids: [ID!]!) {", queryOptions.PrettyPrint, level++);
+        sb.AppendValue("query nodes($ids: [ID!]!) {", queryOptions.PrettyPrint, level++);
         sb.AppendValue("nodes(ids: $ids)", queryOptions.PrettyPrint, level++);
         sb.AppendValue($"{{... on {fragment ?? typeof(T).Name} {{", queryOptions.PrettyPrint, level++);
         QueryBuilder.BuildType(value, queryOptions, sb, ref level);
@@ -65,6 +65,6 @@ public abstract class ServiceBase: IShopifyService
 
         logger.LogTrace("Query: {query}", query);
 
-        return client.ExecuteQuery(new[] { value }, new { ids }, "getNodes", query, options: options, ct: ct);
+        return client.ExecuteQuery(new[] { value }, new { ids }, "nodes", query, options: options, ct: ct);
     }
 }

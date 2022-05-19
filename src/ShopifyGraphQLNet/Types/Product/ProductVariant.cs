@@ -116,7 +116,8 @@ public class ProductVariant : INode, IHasMetafields
         PriceV2 = MoneyV2.Default,
         QuantityAvailable = default,
         SelectedOptions = new[] { SelectedOption.Default },
-        Sku = String.Empty
+        Sku = String.Empty,
+        Title = String.Empty,
     };
 }
 

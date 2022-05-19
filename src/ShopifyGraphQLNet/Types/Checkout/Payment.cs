@@ -55,7 +55,7 @@ public class Payment: INode
 
     public static readonly Payment Default = new()
     {
-        AmountV2 = MoneyV2.Default, Checkout = Checkout.Default, Id = String.Empty, CreditCard = CreditCard.Default,
+        AmountV2 = MoneyV2.Default, Id = String.Empty, CreditCard = CreditCard.Default,
         BillingAddress = MailingAddress.Default, ErrorMessage = String.Empty, IdempotencyKey = String.Empty,
         NextActionUrl = String.Empty, Transaction = Transaction.Default
     };

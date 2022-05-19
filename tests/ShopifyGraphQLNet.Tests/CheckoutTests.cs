@@ -253,5 +253,17 @@ namespace ShopifyGraphQLNet.Tests
             Assert.Equal(payment.IdempotencyKey, pm.IdempotencyKey);
             Assert.Equal(payment.PaymentAmount.Amount, pm.AmountV2.Amount);
         }
+
+        [Fact]
+        public async Task GetAvailableShippingRatesTest()
+        {
+            var result = await checkoutService.GetNode(checkoutPayload.Checkout.Id,
+                new { AvailableShippingRates = AvailableShippingRates.Default }, nameof(Checkout));
+
+            result.Assert();
+            Assert.True(result.Payload!.AvailableShippingRates.Ready);
+            Assert.NotNull(result.Payload!.AvailableShippingRates.ShippingRates);
+            Assert.NotEmpty(result.Payload!.AvailableShippingRates.ShippingRates!);
+        }
     }
 }
